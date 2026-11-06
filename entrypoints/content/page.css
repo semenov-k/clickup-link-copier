@@ -111,6 +111,22 @@
   box-shadow: inset 2px 0 0 var(--cuh-primary);
 }
 
+/* Subtask rows: the overlay has to sit above ClickUp's sticky name cell (z-index 35/36). */
+cu-task-row.cuh-selected::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 37;
+  pointer-events: none;
+  background: var(--cuh-selected);
+  box-shadow: inset 2px 0 0 var(--cuh-primary);
+}
+
+/* Inside the subtask link, next to ClickUp's own hover buttons. */
+.cu-task-row-main__link-text > .cuh-actions {
+  margin-left: 4px;
+}
+
 .board-task.cuh-selected::after {
   content: '';
   position: absolute;

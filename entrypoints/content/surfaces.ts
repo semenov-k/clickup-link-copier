@@ -26,6 +26,15 @@ export const ROW_SURFACES: RowSurface[] = [
     mount: '.cu-task-name-cell__name-row',
   },
   {
+    // Subtasks on the task page (and ClickUp's older list rows). ClickUp keeps its own
+    // hover buttons inside the link text, so ours go right after them.
+    kind: 'list',
+    row: 'cu-task-row',
+    link: 'a.cu-task-row-main__link',
+    title: '.cu-task-row-main__link-text-inner',
+    mount: '.cu-task-row-main__link-text',
+  },
+  {
     kind: 'board',
     row: '.board-task',
     link: 'a.board-task__name-link',
