@@ -2,6 +2,7 @@
   "name": "clickup-helper",
   "description": "Copy ClickUp tasks as rich title links — one by one or collected in bulk.",
   "private": true,
+  "license": "MIT",
   "version": "1.0.0",
   "type": "module",
   "scripts": {

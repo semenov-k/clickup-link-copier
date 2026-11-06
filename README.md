@@ -2,29 +2,39 @@
 
 Chrome extension that copies ClickUp tasks as **clickable title links**, so pasting into Slack, Notion, Google Docs, Gmail etc. gives you this:
 
-- [Onboarding] Add progress bar to signup steps
-- [API] Return 404 for archived projects
-- Fix date picker in dark mode
+- [APP-412] [Onboarding] Add progress bar to signup steps
+- [APP-405] [API] Return 404 for archived projects
+- [APP-417] Fix date picker in dark mode
 
-Built with [WXT](https://wxt.dev) + TypeScript (Manifest V3).
+Built with [WXT](https://wxt.dev) + TypeScript (Manifest V3). Styled to match ClickUp and follows its light/dark theme.
 
 ## Features
 
 | Where | What |
 | --- | --- |
 | **List view** rows | Hover a row → 🔗 copy link, ☰+ add to list |
+| **Subtasks** on a task page | Same buttons on hover, next to ClickUp's own row buttons |
 | **Board view** cards | Same buttons in the card's bottom-right corner |
-| **Task detail** (page or modal) | `Copy link` and `Add to list` buttons above the title |
+| **Task page** (full page or modal) | **Copy link** and **Add to list** buttons in the header, above the title |
 | **Anywhere** | `⌥ Option` / `Alt` + click a task row, card or task link → add / remove it from the list |
-| **Dock** (bottom center) | Appears when the list isn't empty: count, **Copy N links**, Clear (with Undo). Expands into a preview of exactly what will paste: drag rows (or `Alt+↑/↓`) to reorder, ⧉ to copy just that task, ✕ to remove |
-| **Shortcut** | `⌥⇧C` / `Alt+Shift+C` → copy all collected tasks |
-| **Toolbar popup** | Same paste preview + Copy / Clear, and paste settings |
+| **Dock** (bottom center) | Appears when the list isn't empty: count, **Copy N links**, Clear (with Undo). Click the count to preview exactly what will paste: drag rows (or `Alt+↑/↓`) to reorder; hover a row for ⧉ copy just that task and ✕ remove. The **Task IDs** switch lives here too |
+| **Shortcut** | `⌥⇧C` / `Alt+Shift+C` → copy all collected tasks (ignored while typing in a field) |
+| **Toolbar popup** | Same paste preview, Copy / Clear (with Undo), and paste settings. Enabled only on `app.clickup.com` |
 
 - One task copies as an inline link; several copy as a bulleted list.
-- Titles are prefixed with the task ID by default: `[APP-7766] Title`. The custom task ID is used wherever the space has custom IDs enabled (ClickUp's regular ID otherwise). It's optional: flip the **Task IDs** switch in the dock's preview, or the checkbox under **Paste settings** in the popup (same setting).
+- Titles are prefixed with the task ID by default: `[APP-7766] Title`. The custom task ID is used wherever the space has custom IDs enabled (ClickUp's regular ID otherwise). It's optional: flip the **Task IDs** switch in the dock, or the checkbox under **Paste settings** in the popup (same setting).
 - The clipboard gets both `text/html` (rich links) and `text/plain`. The plain-text format is configurable in the popup: Markdown `[Title](url)` (default), `Title — url`, or URL only.
-- The collected list is stored in `chrome.storage.local`, so it's shared across ClickUp tabs and survives reloads.
-- Optional "Clear the list after Copy all".
+- The collected list is stored in `chrome.storage.local`, so it's shared across ClickUp tabs and the popup and survives reloads. All changes to it go through the background worker one at a time, so quick edits from several tabs never overwrite each other.
+- Optional **Clear the list after copying**. Undo puts back only the copied tasks, in their original order.
+
+## Permissions
+
+| Permission | Why |
+| --- | --- |
+| `storage` | Keeps the collected list and settings |
+| `clipboardWrite` | Copies links |
+| `declarativeContent` | Enables the toolbar button only on ClickUp, without reading the sites you visit |
+| `https://app.clickup.com/*` | Adds the buttons to ClickUp pages |
 
 ## Develop
 
@@ -41,11 +51,15 @@ pnpm compile    # type-check
 1. `pnpm build`
 2. Open `chrome://extensions`, enable **Developer mode**
 3. **Load unpacked** → select `.output/chrome-mv3`
+4. Refresh any open ClickUp tabs
+
+After pulling changes, run `pnpm build` again, click ↻ on the extension in `chrome://extensions`, and refresh ClickUp tabs.
 
 ## Project layout
 
 ```
 entrypoints/
+  background.ts   # applies list changes one at a time; toolbar button only on ClickUp
   content/
     index.ts      # content script: injects buttons, Alt+click, shortcuts
     surfaces.ts   # ClickUp DOM selectors (update here if ClickUp changes markup)
@@ -54,9 +68,16 @@ entrypoints/
   popup/          # toolbar popup
 utils/
   clipboard.ts    # rich clipboard write (+ execCommand fallback)
+  collection.ts   # list operations (toggle, remove, clear, reorder, restore)
   format.ts       # HTML / plain-text formatting
-  store.ts        # collection + settings in chrome.storage
+  icons.ts        # inline SVG icons
+  preview-list.*  # paste preview shared by the dock and popup
+  store.ts        # settings + list storage, messages to the background worker
   task.ts         # task URL parsing
 ```
 
 If ClickUp ships a UI change and buttons stop showing, the selectors in `entrypoints/content/surfaces.ts` are the place to look.
+
+## License
+
+[MIT](LICENSE)
