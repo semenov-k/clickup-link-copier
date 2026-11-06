@@ -88,22 +88,41 @@ export function taskFromRow(row: Element, surface: RowSurface): Task | null {
 }
 
 /**
+ * The task-id label belonging to this hero. It may sit outside the hero element,
+ * so walk up — but stop before reaching a container that also holds another task
+ * (e.g. a subtask modal over a full-page parent), whose label would be the wrong one.
+ */
+function taskIdLabel(hero: Element): Element | null {
+  for (let el: Element | null = hero; el && el !== document.documentElement; el = el.parentElement) {
+    if (el !== hero && el.querySelectorAll(DETAIL.hero).length > 1) return null;
+    const label = el.querySelector(DETAIL.taskIdLabel);
+    if (label) return label;
+  }
+  return null;
+}
+
+const TASK_ID = /^[A-Za-z0-9_-]+$/;
+
+/**
  * The id ClickUp displays for the open task: the custom task id (e.g. "APP-7766")
  * when the space has them enabled, otherwise the regular id.
  * Read from the header's task-id button, or the tab title ("Name | APP-7766" / "Name | #86abc123x").
+ * The tab title is only trusted when it names this task: ClickUp can render the
+ * task before updating it (still "Sprint 12 | ClickUp").
  */
-function displayedTaskId(hero: Element): string | null {
-  const label = cleanTitle(
-    hero.querySelector(DETAIL.taskIdLabel)?.textContent ?? document.querySelector(DETAIL.taskIdLabel)?.textContent,
-  ).replace(/^#/, '');
-  if (/^[A-Za-z0-9_-]+$/.test(label)) return label;
-  return document.title.match(/\|\s*#?([A-Za-z0-9_-]+)\s*$/)?.[1] ?? null;
+function displayedTaskId(hero: Element, title: string): string | null {
+  const label = cleanTitle(taskIdLabel(hero)?.textContent).replace(/^#/, '');
+  if (TASK_ID.test(label)) return label;
+  const tab = document.title.match(/^(.*)\|\s*#?([A-Za-z0-9_-]+)\s*$/);
+  if (tab && title && cleanTitle(tab[1]) === title) return tab[2] ?? null;
+  return null;
 }
 
 /** The task currently open in the detail view / modal. */
 export function taskFromDetail(hero: Element): Task | null {
   const parsed = parseTaskUrl(location.href);
-  const shownId = displayedTaskId(hero);
+  const title = cleanTitle(hero.querySelector(DETAIL.title)?.textContent);
+  const shownId = displayedTaskId(hero, title);
   const id = shownId ?? parsed?.id;
   if (!id) return null;
   // Prefer the custom id as the identity, so the same task collected from a
@@ -114,8 +133,7 @@ export function taskFromDetail(hero: Element): Task | null {
     shownId && shownId !== parsed?.id && team
       ? `${location.origin}/t/${team}/${shownId}`
       : (parsed?.url ?? `${location.origin}/t/${id}`);
-  const title = cleanTitle(hero.querySelector(DETAIL.title)?.textContent) || id;
-  return { id, url, title };
+  return { id, url, title: title || id };
 }
 
 /** Resolves the task under an arbitrary click target (for modifier+click collection). */
