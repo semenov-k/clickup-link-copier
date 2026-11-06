@@ -1,9 +1,18 @@
 {
-  "name": "clickup-helper",
-  "description": "Copy ClickUp tasks as rich title links — one by one or collected in bulk.",
+  "name": "clickup-link-copier",
+  "description": "Copy ClickUp tasks as clickable title links — one at a time, or collect many and copy them as a list.",
   "private": true,
-  "license": "MIT",
   "version": "1.0.0",
+  "license": "MIT",
+  "author": "Kirill Semenov",
+  "homepage": "https://github.com/semenov-k/clickup-link-copier#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/semenov-k/clickup-link-copier.git"
+  },
+  "bugs": {
+    "url": "https://github.com/semenov-k/clickup-link-copier/issues"
+  },
   "type": "module",
   "scripts": {
     "dev": "wxt",

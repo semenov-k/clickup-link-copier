@@ -1,9 +1,10 @@
 import { defineConfig } from 'wxt';
 
+// Version and description come from package.json.
 export default defineConfig({
   manifest: {
     name: 'ClickUp Link Copier',
-    description: 'Copy ClickUp tasks as clickable title links — one at a time, or collect many and copy them as a list.',
+    homepage_url: 'https://github.com/semenov-k/clickup-link-copier',
     permissions: ['storage', 'clipboardWrite', 'declarativeContent'],
     host_permissions: ['https://app.clickup.com/*'],
     action: { default_title: 'ClickUp Link Copier' },
