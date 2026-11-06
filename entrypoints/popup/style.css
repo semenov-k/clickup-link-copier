@@ -1,24 +1,50 @@
-/* Same ink surface as the in-page dock: this is a preview of a Slack paste. */
+/*
+ * Popup styled as a ClickUp popover. It can't read ClickUp's CSS variables
+ * (it isn't on a ClickUp page), so it uses the values measured from ClickUp's
+ * light theme, plus a dark variant that follows the system setting.
+ */
 :root {
-  --ink: #1a1d21;
-  --raised: #222529;
-  --raised-2: #2c2f33;
-  --line: rgba(232, 232, 232, 0.13);
-  --text: #d1d2d3;
-  --muted: #9b9c9e;
-  --bright: #f8f8f8;
-  --link: #1d9bd1;
-  --ok: #2bac76;
-  --purple: #7b68ee;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --bg: #ffffff;
+  --hover: rgba(0, 0, 0, 0.0588);
+  --subtle: #f9f9f9;
+  --text: #202020;
+  --secondary: #646464;
+  --tertiary: #838383;
+  --border: #e8e8e8;
+  --border-strong: #cecece;
+  --primary: #6049e7;
+  --primary-hover: #553ed0;
+  --primary-text: #5a43d6;
+  --success: #30a46c;
+  --danger: #c62a2f;
 
   --pv-text: var(--text);
-  --pv-muted: var(--muted);
-  --pv-link: var(--link);
-  --pv-line: var(--line);
-  --pv-hover: var(--raised);
-  --pv-hover-strong: var(--raised-2);
-  --pv-ok: var(--ok);
-  color-scheme: dark;
+  --pv-muted: var(--tertiary);
+  --pv-link: var(--primary-text);
+  --pv-line: var(--border);
+  --pv-hover: var(--hover);
+  --pv-hover-strong: var(--hover);
+  --pv-ok: var(--success);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1f1f1f;
+    --hover: rgba(255, 255, 255, 0.07);
+    --subtle: #262626;
+    --text: #e8e8e8;
+    --secondary: #b4b4b4;
+    --tertiary: #8f8f8f;
+    --border: #333333;
+    --border-strong: #474747;
+    --primary: #7b68ee;
+    --primary-hover: #8b7af0;
+    --primary-text: #a395f7;
+    --danger: #ff7b7f;
+    color-scheme: dark;
+  }
 }
 
 * {
@@ -26,11 +52,11 @@
 }
 
 body {
-  width: 400px;
+  width: 380px;
   margin: 0;
-  background: var(--ink);
+  background: var(--bg);
   color: var(--text);
-  font: 13px/1.45 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font: 400 13px/1.45 var(--font);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -44,7 +70,7 @@ input {
 kbd {
   font: inherit;
   font-weight: 600;
-  color: var(--bright);
+  color: var(--secondary);
 }
 
 svg {
@@ -53,8 +79,8 @@ svg {
 }
 
 :focus-visible {
-  outline: 2px solid var(--link);
-  outline-offset: 2px;
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
 }
 
 /* ---------- Header ---------- */
@@ -63,31 +89,32 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 12px 4px 16px;
+  padding: 12px 10px 4px 16px;
 }
 
 h1 {
   margin: 0;
-  color: var(--bright);
-  font-size: 16px;
-  font-weight: 700;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
 }
 
 .text-btn {
   border: 0;
   background: none;
-  height: 28px;
+  height: 24px;
   padding: 0 8px;
   border-radius: 6px;
-  color: var(--muted);
+  color: var(--secondary);
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
 }
 
 .text-btn:hover {
-  background: var(--raised);
-  color: var(--bright);
+  background: var(--hover);
+  color: var(--text);
 }
 
 /* ---------- List ---------- */
@@ -95,8 +122,9 @@ h1 {
 .caption {
   margin: 0;
   padding: 0 16px 2px;
-  color: var(--muted);
+  color: var(--tertiary);
   font-size: 12px;
+  font-weight: 500;
 }
 
 .items {
@@ -106,28 +134,33 @@ h1 {
 /* ---------- Empty ---------- */
 
 .empty {
-  padding: 6px 16px 14px;
-  color: var(--muted);
+  padding: 4px 16px 12px;
+  color: var(--secondary);
 }
 
 .empty p {
   margin: 0;
   max-width: 34em;
+  line-height: 22px;
 }
 
 .chip {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 0 6px;
-  border: 1px solid var(--line);
-  border-radius: 5px;
-  color: var(--text);
+  height: 20px;
+  padding: 0 6px 0 4px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--secondary);
   white-space: nowrap;
-  vertical-align: 1px;
-  font-size: 12px;
+  /* inline-flex takes its baseline from the icon, so center it on the text instead */
+  vertical-align: middle;
   line-height: 18px;
+  font-size: 12px;
+  font-weight: 500;
 }
+
 
 /* ---------- Actions ---------- */
 
@@ -135,53 +168,59 @@ h1 {
   padding: 8px 12px 12px;
 }
 
+/* ClickUp primary button */
 .primary {
   width: 100%;
-  height: 38px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   border: 0;
-  border-radius: 8px;
-  background: var(--bright);
-  color: var(--ink);
-  font-weight: 700;
+  border-radius: 6px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 500;
   cursor: pointer;
   transition: background-color 0.12s ease;
 }
 
 .primary:not(:disabled):hover {
-  background: #fff;
+  background: var(--primary-hover);
 }
 
 .primary:disabled {
-  background: var(--raised);
-  color: var(--muted);
+  background: var(--subtle);
+  border: 1px solid var(--border);
+  color: var(--tertiary);
   cursor: default;
 }
 
-.primary.done {
-  background: var(--ok);
+/* "Copied" can show while disabled (list cleared after copying), so override the disabled look. */
+.primary.done,
+.primary.done:disabled {
+  border: 0;
+  background: var(--success);
   color: #fff;
 }
 
 .shortcut {
   margin: 8px 0 0;
   text-align: center;
-  color: var(--muted);
+  color: var(--tertiary);
   font-size: 12px;
 }
 
 /* ---------- Settings ---------- */
 
 .settings {
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--border);
 }
 
 .settings summary {
   padding: 10px 16px;
-  color: var(--muted);
+  color: var(--secondary);
+  font-weight: 500;
   cursor: pointer;
   list-style: none;
   display: flex;
@@ -195,17 +234,21 @@ h1 {
 
 .settings summary::before {
   content: '';
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-right: 1.5px solid currentColor;
   border-bottom: 1.5px solid currentColor;
   transform: rotate(-45deg);
   transition: transform 0.15s ease;
-  margin-right: 2px;
+  margin-right: 3px;
 }
 
 .settings[open] summary::before {
   transform: rotate(45deg);
+}
+
+.settings summary:hover {
+  background: var(--hover);
 }
 
 .settings summary:hover,
@@ -214,7 +257,7 @@ h1 {
 }
 
 .settings-body {
-  padding: 0 16px 14px;
+  padding: 10px 16px 14px;
 }
 
 .field {
@@ -225,19 +268,24 @@ h1 {
 
 .field-label {
   color: var(--text);
+  font-weight: 500;
 }
 
 .field select {
   height: 32px;
   padding: 0 8px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--border);
   border-radius: 6px;
-  background: var(--raised);
-  color: var(--bright);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.field select:hover {
+  border-color: var(--border-strong);
 }
 
 .field-help {
-  color: var(--muted);
+  color: var(--tertiary);
   font-size: 12px;
 }
 
@@ -254,15 +302,15 @@ h1 {
 }
 
 .sample {
-  color: var(--muted);
+  color: var(--tertiary);
   white-space: nowrap;
 }
 
 .check input {
   margin: 0;
-  width: 15px;
-  height: 15px;
-  accent-color: var(--link);
+  width: 14px;
+  height: 14px;
+  accent-color: var(--primary);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,21 +1,35 @@
-/* Styles injected into ClickUp's page. Everything is prefixed with `cuh-`. */
+/*
+ * Styles injected into ClickUp's page. Everything is prefixed with `cuh-`.
+ * Buttons copy ClickUp's own controls (row action buttons, compact outline
+ * buttons) and use ClickUp's CSS variables, so they follow its theme.
+ */
 
 :root {
-  --cuh-accent: #7b68ee;
-  --cuh-accent-soft: rgba(123, 104, 238, 0.12);
-  --cuh-hover: rgba(127, 127, 127, 0.18);
+  --cuh-primary: var(--cu-background-primary, #6049e7);
+  --cuh-primary-text: var(--cu-content-primary, #5a43d6);
+  --cuh-primary-subtle: var(--cu-background-primary-subtle, #f0f1ff);
+  --cuh-elevated: var(--cu-background-elevated, #ffffff);
+  --cuh-hover: var(--cu-background-elevated-hover, rgba(0, 0, 0, 0.0235));
+  --cuh-pressed: var(--cu-background-elevated-pressed, rgba(0, 0, 0, 0.0588));
+  --cuh-border: var(--cu-border-default, #e8e8e8);
+  --cuh-border-strong: var(--cu-border-high-contrast, #cecece);
+  --cuh-text: var(--cu-content-default, #202020);
+  --cuh-secondary: var(--cu-content-secondary, #646464);
+  --cuh-tertiary: var(--cu-content-tertiary, #838383);
+  --cuh-success: var(--cu-content-success, #18794e);
+  --cuh-selected: color-mix(in srgb, var(--cuh-primary) 9%, transparent);
 }
 
-/* ---------- Row / card hover actions ---------- */
+/* ---------- Row / card hover actions (ClickUp row action buttons) ---------- */
 
 .cuh-actions {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   flex: none;
-  margin-left: 4px;
+  margin-left: 6px;
   opacity: 0;
-  transition: opacity 0.12s ease;
+  transition: opacity 0.1s ease;
 }
 
 .cuh-row:hover .cuh-actions,
@@ -24,7 +38,7 @@
   opacity: 1;
 }
 
-/* When selected but not hovered, only show the "in list" check. */
+/* When selected but not hovered, only show the "in list" button. */
 .cuh-row.cuh-selected:not(:hover) .cuh-actions .cuh-copy {
   visibility: hidden;
 }
@@ -37,45 +51,47 @@
   justify-content: center;
   width: 24px;
   height: 24px;
+  border: 1px solid var(--cuh-border);
   border-radius: 6px;
-  color: inherit;
-  opacity: 0.65;
+  background: var(--cuh-elevated);
+  color: var(--cuh-tertiary);
   cursor: pointer;
   transition:
-    background-color 0.12s ease,
-    opacity 0.12s ease,
-    color 0.12s ease,
-    transform 0.08s ease;
+    background-color 0.1s ease,
+    border-color 0.1s ease,
+    color 0.1s ease;
 }
 
 .cuh-btn:hover {
-  opacity: 1;
-  background: var(--cuh-hover);
+  border-color: var(--cuh-border-strong);
+  background-image: linear-gradient(var(--cuh-hover), var(--cuh-hover));
+  color: var(--cuh-text);
 }
 
 .cuh-btn:active {
-  transform: scale(0.92);
+  background-image: linear-gradient(var(--cuh-pressed), var(--cuh-pressed));
 }
 
 .cuh-btn:focus-visible {
-  opacity: 1;
-  outline: 2px solid var(--cuh-accent);
+  outline: 2px solid var(--cuh-primary);
   outline-offset: 1px;
 }
 
 .cuh-btn svg {
   display: block;
+  width: 14px;
+  height: 14px;
   pointer-events: none;
 }
 
 .cuh-btn[data-on='true'] {
-  opacity: 1;
-  color: var(--cuh-accent);
+  border-color: color-mix(in srgb, var(--cuh-primary) 45%, transparent);
+  background: var(--cuh-primary-subtle);
+  color: var(--cuh-primary-text);
 }
 
 .cuh-btn.cuh-done {
-  opacity: 1;
-  color: #2fa36b;
+  color: var(--cuh-success);
 }
 
 /* ---------- Selected rows / cards ---------- */
@@ -91,8 +107,8 @@
   inset: 0;
   z-index: 5;
   pointer-events: none;
-  background: var(--cuh-accent-soft);
-  box-shadow: inset 3px 0 0 var(--cuh-accent);
+  background: var(--cuh-selected);
+  box-shadow: inset 2px 0 0 var(--cuh-primary);
 }
 
 .board-task.cuh-selected::after {
@@ -101,23 +117,18 @@
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  border: 2px solid var(--cuh-accent);
+  border: 2px solid var(--cuh-primary);
   border-radius: 8px;
-  background: var(--cuh-accent-soft);
+  background: var(--cuh-selected);
 }
 
-/* Board cards: pin the buttons to the bottom-right corner, matching ClickUp's chips. */
+/* Board cards: pin the buttons to the bottom-right corner, next to ClickUp's chips. */
 .board-task > .cuh-actions {
   position: absolute;
   right: 8px;
   bottom: 8px;
   z-index: 2;
-  gap: 4px;
   margin: 0;
-}
-
-.board-task > .cuh-actions .cuh-btn {
-  border: 1px solid rgba(127, 127, 127, 0.28);
 }
 
 /* ---------- Modifier held: show what can be collected ---------- */
@@ -129,11 +140,11 @@ html.cuh-alt-mode a[href*='/t/'] {
 }
 
 html.cuh-alt-mode .cuh-row:hover {
-  outline: 2px dashed var(--cuh-accent);
+  outline: 2px dashed var(--cuh-primary);
   outline-offset: -2px;
 }
 
-/* ---------- Task detail view ---------- */
+/* ---------- Task page (matches ClickUp's header buttons, e.g. "Task") ---------- */
 
 .cuh-detail {
   display: inline-flex;
@@ -150,41 +161,51 @@ html.cuh-alt-mode .cuh-row:hover {
   align-items: center;
   gap: 6px;
   height: 28px;
-  padding: 0 10px;
-  border: 1px solid rgba(127, 127, 127, 0.3);
-  border-radius: 6px;
-  font: 500 13px/1 inherit;
-  font-family: inherit;
-  color: inherit;
+  padding: 0 8px 0 7px;
+  border: 1px solid var(--cuh-border);
+  border-radius: 7px;
+  background: var(--cuh-elevated);
+  color: var(--cuh-secondary);
+  font-family: var(--cu-font-family, inherit);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 18px;
   white-space: nowrap;
   cursor: pointer;
   transition:
-    background-color 0.12s ease,
-    border-color 0.12s ease,
-    color 0.12s ease;
+    background-color 0.1s ease,
+    border-color 0.1s ease,
+    color 0.1s ease;
 }
 
 .cuh-pill:hover {
-  background: var(--cuh-hover);
+  border-color: var(--cuh-border-strong);
+  background-image: linear-gradient(var(--cuh-hover), var(--cuh-hover));
+  color: var(--cuh-text);
+}
+
+.cuh-pill:active {
+  background-image: linear-gradient(var(--cuh-pressed), var(--cuh-pressed));
 }
 
 .cuh-pill:focus-visible {
-  outline: 2px solid var(--cuh-accent);
+  outline: 2px solid var(--cuh-primary);
   outline-offset: 1px;
 }
 
 .cuh-pill svg {
   flex: none;
+  width: 15px;
+  height: 15px;
   pointer-events: none;
 }
 
 .cuh-pill[data-on='true'] {
-  color: var(--cuh-accent);
-  border-color: var(--cuh-accent);
-  background: var(--cuh-accent-soft);
+  border-color: color-mix(in srgb, var(--cuh-primary) 45%, transparent);
+  background: var(--cuh-primary-subtle);
+  color: var(--cuh-primary-text);
 }
 
 .cuh-pill.cuh-done {
-  color: #2fa36b;
-  border-color: #2fa36b;
+  color: var(--cuh-success);
 }

@@ -1,12 +1,12 @@
 /*
- * The paste preview. Mirrors how the list lands in Slack: disc bullets,
- * underlined link-blue titles. Hosts set --pv-* variables.
+ * The paste preview: the list as it will paste (bulleted title links).
+ * Styled like ClickUp list items; hosts set the --pv-* variables.
  */
 
 .items {
   list-style: none;
   margin: 0;
-  padding: 6px 6px 6px 0;
+  padding: 4px 8px 4px 0;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--pv-line) transparent;
@@ -17,7 +17,7 @@
   display: grid;
   grid-template-columns: 22px 14px 1fr 26px 26px;
   align-items: start;
-  border-radius: 6px;
+  border-radius: 7px;
   cursor: grab;
   touch-action: none;
   user-select: none;
@@ -60,11 +60,12 @@
   min-width: 0;
   padding: 3px 4px 3px 2px;
   color: var(--pv-link);
-  font-size: 14px;
+  font-size: 13px;
   line-height: 20px;
   text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
   text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
+  text-underline-offset: 3px;
   overflow-wrap: anywhere;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -74,7 +75,7 @@
 }
 
 .link:hover {
-  text-decoration-thickness: 2px;
+  text-decoration-color: currentColor;
 }
 
 .link:focus-visible {
@@ -92,7 +93,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 5px;
+  border-radius: 6px;
   color: var(--pv-muted);
   cursor: pointer;
   opacity: 0;
