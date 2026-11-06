@@ -1,0 +1,272 @@
+/* Same ink surface as the in-page dock: this is a preview of a Slack paste. */
+:root {
+  --ink: #1a1d21;
+  --raised: #222529;
+  --raised-2: #2c2f33;
+  --line: rgba(232, 232, 232, 0.13);
+  --text: #d1d2d3;
+  --muted: #9b9c9e;
+  --bright: #f8f8f8;
+  --link: #1d9bd1;
+  --ok: #2bac76;
+  --purple: #7b68ee;
+
+  --pv-text: var(--text);
+  --pv-muted: var(--muted);
+  --pv-link: var(--link);
+  --pv-line: var(--line);
+  --pv-hover: var(--raised);
+  --pv-hover-strong: var(--raised-2);
+  --pv-ok: var(--ok);
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 400px;
+  margin: 0;
+  background: var(--ink);
+  color: var(--text);
+  font: 13px/1.45 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+select,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+kbd {
+  font: inherit;
+  font-weight: 600;
+  color: var(--bright);
+}
+
+svg {
+  display: block;
+  flex: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+
+/* ---------- Header ---------- */
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 12px 4px 16px;
+}
+
+h1 {
+  margin: 0;
+  color: var(--bright);
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.text-btn {
+  border: 0;
+  background: none;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.text-btn:hover {
+  background: var(--raised);
+  color: var(--bright);
+}
+
+/* ---------- List ---------- */
+
+.caption {
+  margin: 0;
+  padding: 0 16px 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.items {
+  max-height: 320px;
+}
+
+/* ---------- Empty ---------- */
+
+.empty {
+  padding: 6px 16px 14px;
+  color: var(--muted);
+}
+
+.empty p {
+  margin: 0;
+  max-width: 34em;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 6px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  color: var(--text);
+  white-space: nowrap;
+  vertical-align: 1px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+/* ---------- Actions ---------- */
+
+.actions {
+  padding: 8px 12px 12px;
+}
+
+.primary {
+  width: 100%;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--bright);
+  color: var(--ink);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+.primary:not(:disabled):hover {
+  background: #fff;
+}
+
+.primary:disabled {
+  background: var(--raised);
+  color: var(--muted);
+  cursor: default;
+}
+
+.primary.done {
+  background: var(--ok);
+  color: #fff;
+}
+
+.shortcut {
+  margin: 8px 0 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ---------- Settings ---------- */
+
+.settings {
+  border-top: 1px solid var(--line);
+}
+
+.settings summary {
+  padding: 10px 16px;
+  color: var(--muted);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.settings summary::-webkit-details-marker {
+  display: none;
+}
+
+.settings summary::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.15s ease;
+  margin-right: 2px;
+}
+
+.settings[open] summary::before {
+  transform: rotate(45deg);
+}
+
+.settings summary:hover,
+.settings[open] summary {
+  color: var(--text);
+}
+
+.settings-body {
+  padding: 0 16px 14px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.field-label {
+  color: var(--text);
+}
+
+.field select {
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--raised);
+  color: var(--bright);
+}
+
+.field-help {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.check-first {
+  margin-bottom: 14px;
+}
+
+.sample {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.check input {
+  margin: 0;
+  width: 15px;
+  height: 15px;
+  accent-color: var(--link);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
