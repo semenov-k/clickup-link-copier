@@ -6,6 +6,8 @@
 
 **Copy ClickUp tasks as clickable titles — one at a time, or a whole batch with one shortcut.**
 
+[Website](https://semenov-k.github.io/clickup-link-copier/) · [Report a problem](https://github.com/semenov-k/clickup-link-copier/issues)
+
 [![License: MIT](https://img.shields.io/badge/license-MIT-6049e7.svg)](LICENSE)
 ![Manifest V3](https://img.shields.io/badge/manifest-v3-6049e7.svg)
 ![Chrome](https://img.shields.io/badge/Chrome-extension-4285F4.svg?logo=googlechrome&logoColor=white)
