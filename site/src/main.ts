@@ -3,8 +3,8 @@ import { toHtml, toPlain } from '../../utils/format.ts';
 import type { Task } from '../../utils/task.ts';
 
 const REPO = 'https://github.com/semenov-k/clickup-link-copier';
-// TODO: replace with the listing URL once the extension is published.
-const STORE_URL = 'https://chromewebstore.google.com/search/ClickUp%20Link%20Copier';
+// Chrome Web Store listing (opens once the extension is approved and published).
+const STORE_URL = 'https://chromewebstore.google.com/detail/nkhidbpjapdgponjmgfangjbihpambak';
 const isMac = /Mac|iPhone|iPad/.test(navigator.platform);
 const FORMAT = { includeId: true };
 

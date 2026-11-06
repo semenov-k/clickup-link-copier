@@ -69,7 +69,9 @@ Open the toolbar popup → **Paste settings**:
 
 ## 📦 Install
 
-The extension isn't in the Chrome Web Store yet, so load it in developer mode:
+**[Add to Chrome from the Chrome Web Store](https://chromewebstore.google.com/detail/nkhidbpjapdgponjmgfangjbihpambak)** (the link works once the listing is approved).
+
+Or build it from source and load it in developer mode:
 
 ```bash
 git clone https://github.com/semenov-k/clickup-link-copier.git
