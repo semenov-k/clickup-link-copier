@@ -1,61 +1,109 @@
+<div align="center">
+
+<img src=".github/readme/logo.svg" width="96" height="96" alt="ClickUp Link Copier logo">
+
 # ClickUp Link Copier
 
-Chrome extension that copies ClickUp tasks as **clickable title links**, so pasting into Slack, Notion, Google Docs, Gmail etc. gives you this:
+**Copy ClickUp tasks as clickable titles — one at a time, or a whole batch with one shortcut.**
 
-- [APP-412] [Onboarding] Add progress bar to signup steps
-- [APP-405] [API] Return 404 for archived projects
-- [APP-417] Fix date picker in dark mode
+[![License: MIT](https://img.shields.io/badge/license-MIT-6049e7.svg)](LICENSE)
+![Manifest V3](https://img.shields.io/badge/manifest-v3-6049e7.svg)
+![Chrome](https://img.shields.io/badge/Chrome-extension-4285F4.svg?logo=googlechrome&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6.svg?logo=typescript&logoColor=white)
+![WXT](https://img.shields.io/badge/built%20with-WXT-67D55E.svg)
 
-Built with [WXT](https://wxt.dev) + TypeScript (Manifest V3). Styled to match ClickUp and follows its light/dark theme.
+<img src=".github/readme/paste-demo.svg" width="880" alt="Left: three bare ClickUp URLs pasted into a chat. Right: the same tasks pasted as a bulleted list of clickable titles with task IDs.">
 
-## Features
+</div>
+
+Pasting a ClickUp URL into Slack gives everyone a wall of `/t/1234567/APP-412`. This extension puts a **copy button on every task** and lets you **collect tasks as you browse**, so you paste titles people can actually read — and click.
+
+## ✨ What you get
+
+- 🔗 **One-click copy** on list rows, subtasks, board cards and the task page
+- 🧺 **Collect while you browse** — <kbd>⌥ Option</kbd>/<kbd>Alt</kbd> + click any task to drop it into a list, then copy them all at once
+- 👀 **See it before you paste** — the dock previews exactly what lands in the clipboard; drag to reorder
+- 🏷️ **Task IDs, your call** — `[APP-412] Title` by default, custom IDs where your space has them; switch it off any time
+- 📋 **Pastes right everywhere** — rich links in Slack, Notion, Google Docs and Gmail; Markdown in code editors and GitHub
+- 🎨 **Feels native** — styled after ClickUp's own buttons and follows its light and dark themes
+- ↩️ **Undo everything** — removing, clearing and copy-and-clear can all be undone
+
+## 🚀 How to use it
+
+1. **Hover a task** and click 🔗 to copy just that one. On an open task, use **Copy link** in the header.
+2. **<kbd>⌥</kbd>+click tasks** in any view to collect them. A dock appears at the bottom of the page.
+3. **Press <kbd>⌥</kbd><kbd>⇧</kbd><kbd>C</kbd>** (<kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> on Windows/Linux) or click **Copy N links**, then paste.
+
+One task pastes as an inline link; several paste as a bulleted list.
+
+### Where the buttons show up
 
 | Where | What |
 | --- | --- |
-| **List view** rows | Hover a row → 🔗 copy link, ☰+ add to list |
+| **List view** rows | Hover → 🔗 copy link, ☰+ add to list |
 | **Subtasks** on a task page | Same buttons on hover, next to ClickUp's own row buttons |
 | **Board view** cards | Same buttons in the card's bottom-right corner |
-| **Task page** (full page or modal) | **Copy link** and **Add to list** buttons in the header, above the title |
-| **Anywhere** | `⌥ Option` / `Alt` + click a task row, card or task link → add / remove it from the list |
-| **Dock** (bottom center) | Appears when the list isn't empty: count, **Copy N links**, Clear (with Undo). Click the count to preview exactly what will paste: drag rows (or `Alt+↑/↓`) to reorder; hover a row for ⧉ copy just that task and ✕ remove. The **Task IDs** switch lives here too |
-| **Shortcut** | `⌥⇧C` / `Alt+Shift+C` → copy all collected tasks (ignored while typing in a field) |
-| **Toolbar popup** | Same paste preview, Copy / Clear (with Undo), and paste settings. Enabled only on `app.clickup.com` |
+| **Task page** (full page or modal) | **Copy link** and **Add to list** in the header, above the title |
+| **Anywhere** | <kbd>⌥</kbd>/<kbd>Alt</kbd> + click a task row, card or task link → add or remove it |
+| **Dock** (bottom center) | Count, **Copy N links**, Clear. Click the count to preview what will paste: drag rows (or <kbd>Alt</kbd>+<kbd>↑</kbd>/<kbd>↓</kbd>) to reorder; hover a row to copy ⧉ or remove ✕ it. The **Task IDs** switch lives here too |
+| **Toolbar popup** | Same preview, Copy / Clear, and paste settings. Active only on `app.clickup.com` |
 
-- One task copies as an inline link; several copy as a bulleted list.
-- Titles are prefixed with the task ID by default: `[APP-7766] Title`. The custom task ID is used wherever the space has custom IDs enabled (ClickUp's regular ID otherwise). It's optional: flip the **Task IDs** switch in the dock, or the checkbox under **Paste settings** in the popup (same setting).
-- The clipboard gets both `text/html` (rich links) and `text/plain`. The plain-text format is configurable in the popup: Markdown `[Title](url)` (default), `Title — url`, or URL only.
-- The collected list is stored in `chrome.storage.local`, so it's shared across ClickUp tabs and the popup and survives reloads. All changes to it go through the background worker one at a time, so quick edits from several tabs never overwrite each other.
-- Optional **Clear the list after copying**. Undo puts back only the copied tasks, in their original order.
+### Keyboard
 
-## Permissions
+| Keys | Does |
+| --- | --- |
+| <kbd>⌥</kbd> + click | Add a task to the list, or remove it |
+| <kbd>⌥</kbd><kbd>⇧</kbd><kbd>C</kbd> | Copy every task in the list (ignored while you're typing) |
+| <kbd>Alt</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd> | Move the focused task in the preview |
+| <kbd>Esc</kbd> | Close the preview |
+
+### Paste settings
+
+Open the toolbar popup → **Paste settings**:
+
+- **Task ID before the title** — on by default
+- **Plain-text format** for apps without rich text: Markdown `[Title](url)` (default), `Title — url`, or URL only
+- **Clear the list after copying** — Undo puts the copied tasks back in their original order
+
+## 📦 Install
+
+The extension isn't in the Chrome Web Store yet, so load it in developer mode:
+
+```bash
+git clone https://github.com/semenov-k/clickup-link-copier.git
+cd clickup-link-copier
+pnpm install
+pnpm build
+```
+
+1. Open `chrome://extensions` and turn on **Developer mode** (top right)
+2. Click **Load unpacked** and pick the `.output/chrome-mv3` folder
+3. Pin the extension and refresh any open ClickUp tabs
+
+**Updating:** `git pull && pnpm build`, click ↻ on the extension in `chrome://extensions`, then refresh ClickUp tabs.
+
+## 🔒 Privacy & permissions
+
+Everything stays in your browser. There's no server, no analytics, and the extension only runs on `app.clickup.com`.
 
 | Permission | Why |
 | --- | --- |
-| `storage` | Keeps the collected list and settings |
-| `clipboardWrite` | Copies links |
+| `storage` | Keeps your collected list and settings (`chrome.storage.local`) |
+| `clipboardWrite` | Copies the links |
 | `declarativeContent` | Enables the toolbar button only on ClickUp, without reading the sites you visit |
 | `https://app.clickup.com/*` | Adds the buttons to ClickUp pages |
 
-## Develop
+## 🛠️ Development
 
 ```bash
-pnpm install
-pnpm dev        # opens Chrome with the extension loaded + hot reload
+pnpm dev        # Chrome with the extension loaded + hot reload
 pnpm build      # production build → .output/chrome-mv3
 pnpm zip        # zip for the Chrome Web Store
 pnpm compile    # type-check
 ```
 
-## Install the build manually
-
-1. `pnpm build`
-2. Open `chrome://extensions`, enable **Developer mode**
-3. **Load unpacked** → select `.output/chrome-mv3`
-4. Refresh any open ClickUp tabs
-
-After pulling changes, run `pnpm build` again, click ↻ on the extension in `chrome://extensions`, and refresh ClickUp tabs.
-
-## Project layout
+<details>
+<summary><b>Project layout</b></summary>
 
 ```
 entrypoints/
@@ -76,8 +124,19 @@ utils/
   task.ts         # task URL parsing
 ```
 
-If ClickUp ships a UI change and buttons stop showing, the selectors in `entrypoints/content/surfaces.ts` are the place to look.
+</details>
 
-## License
+<details>
+<summary><b>How it works</b></summary>
 
-[MIT](LICENSE)
+- The clipboard gets both `text/html` (rich links) and `text/plain`, so every app picks the best version it supports.
+- The collected list lives in `chrome.storage.local`, shared by all ClickUp tabs and the popup, and survives reloads. Every change goes through the background worker one at a time, so quick edits from several tabs never overwrite each other.
+- Colors come from ClickUp's own CSS variables, which is how the buttons and dock follow its theme.
+
+</details>
+
+**Buttons disappeared after a ClickUp update?** ClickUp probably changed its markup. The selectors live in [`entrypoints/content/surfaces.ts`](entrypoints/content/surfaces.ts) — issues and PRs welcome.
+
+## 📄 License
+
+[MIT](LICENSE) © 2026 Kirill Semenov

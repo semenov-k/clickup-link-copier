@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="300" viewBox="0 0 880 300" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <filter id="sh" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.10"/>
+    </filter>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8f7cff"/>
+      <stop offset="1" stop-color="#5b45e0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Before -->
+  <g transform="translate(16 28)">
+    <rect width="384" height="244" rx="14" fill="#ffffff" stroke="#e8e8e8" filter="url(#sh)"/>
+    <text x="24" y="38" font-size="13" font-weight="600" fill="#838383">Pasting ClickUp URLs</text>
+    <circle cx="36" cy="76" r="14" fill="#d9d9d9"/>
+    <text x="60" y="72" font-size="14" font-weight="700" fill="#202020">Alex</text>
+    <text x="96" y="72" font-size="12" fill="#a0a0a0">10:02</text>
+    <text x="60" y="94" font-size="14" fill="#202020">Shipped today:</text>
+    <text x="60" y="120" font-size="13" fill="#1d6fd8">https://app.clickup.com/t/1234567/APP-412</text>
+    <text x="60" y="144" font-size="13" fill="#1d6fd8">https://app.clickup.com/t/1234567/APP-405</text>
+    <text x="60" y="168" font-size="13" fill="#1d6fd8">https://app.clickup.com/t/1234567/APP-417</text>
+    <text x="60" y="210" font-size="13" fill="#a0a0a0" font-style="italic">…which task was which?</text>
+  </g>
+
+  <!-- Arrow badge -->
+  <g transform="translate(440 150)">
+    <circle r="26" fill="url(#g)"/>
+    <path d="M-9 0 H9 M3 -7 L10 0 L3 7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- After -->
+  <g transform="translate(480 28)">
+    <rect width="384" height="244" rx="14" fill="#ffffff" stroke="#e8e8e8" filter="url(#sh)"/>
+    <text x="24" y="38" font-size="13" font-weight="600" fill="#6049e7">With ClickUp Link Copier</text>
+    <circle cx="36" cy="76" r="14" fill="#cfc6ff"/>
+    <text x="60" y="72" font-size="14" font-weight="700" fill="#202020">Alex</text>
+    <text x="96" y="72" font-size="12" fill="#a0a0a0">10:02</text>
+    <text x="60" y="94" font-size="14" fill="#202020">Shipped today:</text>
+    <g font-size="14" fill="#1d6fd8" text-decoration="underline">
+      <circle cx="66" cy="115" r="2.5" fill="#202020"/>
+      <text x="76" y="120">[APP-412] Add progress bar to signup</text>
+      <circle cx="66" cy="139" r="2.5" fill="#202020"/>
+      <text x="76" y="144">[APP-405] Return 404 for archived projects</text>
+      <circle cx="66" cy="163" r="2.5" fill="#202020"/>
+      <text x="76" y="168">[APP-417] Fix date picker in dark mode</text>
+    </g>
+    <text x="60" y="210" font-size="13" fill="#18794e">✓ Copied 3 links with one shortcut</text>
+  </g>
+</svg>
