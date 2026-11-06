@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ClickUp Link Copier</title>
+    <meta name="description" content="A free Chrome extension for ClickUp. Copy tasks as clickable titles, one at a time or a whole list at once." />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="bg-paper text-ink font-body antialiased">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-paper focus:px-3 focus:py-2">Skip to content</a>
+
+    <header id="site-header" class="site-header">
+      <div class="mx-auto flex h-16 max-w-[1120px] items-center justify-between px-4 sm:px-8">
+      <a href="#" class="flex items-center gap-2.5 font-display text-[17px] font-semibold tracking-tight">
+        <img src="/favicon.svg" alt="" width="28" height="28" class="rounded-[7px]" />
+        ClickUp Link Copier
+      </a>
+      <nav class="flex items-center gap-2 text-[15px]">
+        <a data-repo href="#" class="nav-link hidden sm:inline-flex">GitHub</a>
+        <a data-store href="#" class="btn-violet"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z"/></svg>Add to Chrome</a>
+      </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- Hero -->
+      <section class="mx-auto max-w-[1120px] px-4 pt-10 pb-8 sm:px-8 sm:pt-16">
+        <h1 class="font-display text-[clamp(2.5rem,5.6vw,4.5rem)] font-semibold leading-[1.02] tracking-[-0.03em]">
+          Paste task titles,<br /> not task URLs
+        </h1>
+        <p class="mt-7 max-w-[34rem] text-[19px] leading-[1.55] text-muted">
+          A free Chrome extension for ClickUp. Copy one task as a clickable title, or
+          <kbd class="key">⌥</kbd>-click a handful and copy them as a list.
+        </p>
+        <div class="mt-8 flex flex-wrap items-center gap-3">
+          <a data-store href="#" class="btn-cta"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z"/></svg>Add to Chrome</a>
+          <a data-repo href="#" class="btn-ghost">View the source</a>
+        </div>
+        <p class="mt-4 text-[14px] text-muted">Free from the Chrome Web Store.</p>
+      </section>
+
+      <!-- Live demo -->
+      <section aria-labelledby="demo-title" class="mx-auto max-w-[1120px] px-4 pb-20 sm:px-8">
+        <h2 id="demo-title" class="sr-only">Try it</h2>
+        <div class="demo-stage">
+          <div class="grid gap-4 lg:grid-cols-[1.15fr_1fr]">
+            <!-- Mock ClickUp list -->
+            <div class="pane" id="board">
+              <div class="pane-head">
+                <span class="font-medium">Sprint 24</span>
+                <span class="text-muted">List</span>
+              </div>
+              <ul id="tasks" class="py-1.5" aria-label="Tasks"></ul>
+              <div id="dock" class="dock" data-empty="true">
+                <span class="dock-count"><span id="dock-n" class="badge">0</span> in list</span>
+                <span class="flex-1"></span>
+                <button id="dock-clear" type="button" class="dock-ghost">Clear</button>
+                <button id="dock-copy" type="button" class="dock-primary">Copy links</button>
+              </div>
+            </div>
+
+            <!-- Chat -->
+            <div class="pane flex flex-col" id="chat">
+              <div class="pane-head">
+                <span class="font-medium">#release-notes</span>
+              </div>
+              <div id="messages" class="max-h-[440px] flex-1 space-y-5 overflow-y-auto px-5 py-5" aria-live="polite">
+                <div class="msg">
+                  <span class="avatar bg-[#d9d9de]" aria-hidden="true">M</span>
+                  <div class="min-w-0">
+                    <p class="msg-meta"><b>Maya</b> <span>9:41</span></p>
+                    <p>What shipped yesterday?</p>
+                    <p class="raw-url">https://app.clickup.com/t/1234567/APP-398</p>
+                    <p class="raw-url">https://app.clickup.com/t/1234567/APP-401</p>
+                    <p class="text-muted">which ones were these again?</p>
+                  </div>
+                </div>
+              </div>
+              <div class="px-4 pb-4">
+                <div id="composer" class="composer" contenteditable="true" role="textbox" aria-multiline="true"
+                     aria-label="Message #release-notes" data-placeholder="Paste here with ⌘V / Ctrl+V"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p id="demo-hint" class="mt-4 max-w-[46rem] text-[15px] leading-relaxed text-muted">
+          Try it: hover a task and copy it, or hold <kbd class="key">⌥</kbd> and click a few, then press Copy.
+          It writes to your real clipboard, so you can paste into Slack too.
+        </p>
+      </section>
+
+      <!-- Every interaction, shown in real ClickUp -->
+      <section aria-labelledby="uses-title" class="border-t border-line">
+        <div class="mx-auto max-w-[1120px] px-4 py-20 sm:px-8">
+          <h2 id="uses-title" class="section-title">Every way to use it</h2>
+          <p class="mt-4 max-w-[36rem] text-muted">Screenshots from ClickUp with the extension installed. The buttons look like ClickUp's own and follow its light and dark theme.</p>
+
+          <h3 class="group-title">Copy one task</h3>
+          <div class="cases">
+            <article class="case">
+              <div class="case-text">
+                <h4>List rows</h4>
+                <p>Hover a row and click the link button to copy that task. The button next to it adds the task to your list. Both sit right after ClickUp's own row buttons.</p>
+              </div>
+              <figure class="shot" style="max-width:634px">
+                <img src="/shots/row-hover.webp" width="634" height="156" loading="lazy" alt="A ClickUp list row on hover, with a Copy link tooltip over the extension's link button." />
+              </figure>
+            </article>
+            <article class="case">
+              <div class="case-text">
+                <h4>Board cards</h4>
+                <p>The same two buttons appear in the corner of a card when you hover it. Cards already in your list get a purple outline.</p>
+              </div>
+              <figure class="shot" style="max-width:271px">
+                <img src="/shots/board-card.webp" width="271" height="375" loading="lazy" alt="A ClickUp board column. Three cards have a purple outline; a hovered card shows link and add buttons in its corner." />
+              </figure>
+            </article>
+            <article class="case case-wide">
+              <div class="case-text">
+                <h4>Subtasks</h4>
+                <p>Subtasks on an open task get the buttons too, next to ClickUp's add and rename buttons.</p>
+              </div>
+              <figure class="shot" style="max-width:896px">
+                <img src="/shots/subtasks.webp" width="896" height="182" loading="lazy" alt="A Subtasks table on a ClickUp task with the extension's buttons on the hovered row." />
+              </figure>
+            </article>
+            <article class="case case-wide">
+              <div class="case-text">
+                <h4>Open task</h4>
+                <p><b>Copy link</b> and <b>Add to list</b> sit in the task header. The copied title uses the ID shown there, so custom IDs like APP-451 come through.</p>
+              </div>
+              <figure class="shot" style="max-width:896px">
+                <img src="/shots/task-header.webp" width="896" height="122" loading="lazy" alt="A ClickUp task header with Copy link and Add to list buttons on the right." />
+              </figure>
+            </article>
+          </div>
+
+          <h3 class="group-title">Collect a few, copy them together</h3>
+          <div class="cases">
+            <article class="case">
+              <div class="case-text">
+                <h4>Hold ⌥ and click</h4>
+                <p>Hold <kbd class="key">⌥</kbd> and click any task: a row, a card, a subtask, or a task link in a doc or comment. A dashed outline shows what will be added. Tasks in your list turn purple; click again to take one out.</p>
+              </div>
+              <figure class="shot" style="max-width:634px">
+                <img src="/shots/alt-collect.webp" width="634" height="218" loading="lazy" alt="Two ClickUp rows highlighted purple as collected, and a third row with a dashed purple outline while the modifier key is held." />
+              </figure>
+            </article>
+            <article class="case">
+              <div class="case-text">
+                <h4>The dock</h4>
+                <p>Once your list has a task, a bar appears at the bottom of ClickUp. <b>Copy N links</b> copies everything, and so does <kbd class="key">⌥</kbd><kbd class="key">⇧</kbd><kbd class="key">C</kbd> from anywhere in ClickUp. Removed or cleared something by mistake? The message that follows has an Undo button.</p>
+              </div>
+              <figure class="shot shot-bare r-dock" style="max-width:459px">
+                <img src="/shots/dock-bar.webp" width="459" height="43" loading="lazy" alt="A floating bar reading 3 in list, with a Copy 3 links button and a trash button." />
+              </figure>
+            </article>
+            <article class="case">
+              <div class="case-text">
+                <h4>Preview before you paste</h4>
+                <p>Click the count to see exactly what will paste. Drag rows to reorder them, copy or remove a single task, and turn task IDs on or off.</p>
+              </div>
+              <figure class="shot shot-bare r-dock" style="max-width:459px">
+                <img src="/shots/dock-open.webp" width="459" height="222" loading="lazy" alt="The expanded dock listing three tasks as underlined links with IDs, a Task IDs switch, and copy and remove buttons on the hovered row." />
+              </figure>
+            </article>
+          </div>
+
+          <h3 class="group-title">From the toolbar</h3>
+          <div class="cases">
+            <article class="case">
+              <div class="case-text">
+                <h4>Popup and paste settings</h4>
+                <p>The toolbar button opens the same list, plus settings: the task ID prefix, the plain-text format for code editors and terminals, and clearing the list after copying. It works on ClickUp pages only.</p>
+              </div>
+              <figure class="shot shot-bare r-dock" style="max-width:380px">
+                <img src="/shots/popup.webp" width="380" height="470" loading="lazy" alt="The extension popup with three tasks, a Copy 3 links button, and paste settings." />
+              </figure>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Paste targets -->
+      <section class="border-t border-line">
+        <div class="mx-auto grid max-w-[1120px] gap-10 px-4 py-20 sm:px-8 lg:grid-cols-[1fr_1.6fr]">
+          <div>
+            <h2 class="section-title">Reads right wherever you paste</h2>
+            <p class="mt-4 max-w-[26rem] text-muted">Each copy carries a rich version and a plain one, and every app picks what it understands.</p>
+          </div>
+          <div class="grid gap-10">
+            <div>
+              <h3 class="font-medium">Slack, Notion, Google Docs, Gmail</h3>
+              <p class="mt-1 text-[15px] text-muted">Clickable titles, as a bulleted list when there are several.</p>
+              <ul id="sample-rich" class="sample mt-4"></ul>
+            </div>
+            <div>
+              <h3 class="font-medium">Code editors, GitHub, terminals</h3>
+              <p class="mt-1 text-[15px] text-muted">Markdown links. Prefer <code>Title — url</code> or bare URLs? It's a setting.</p>
+              <pre id="sample-md" class="sample sample-code mt-4"></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- Privacy -->
+      <section class="border-t border-line">
+        <div class="mx-auto max-w-[1120px] px-4 py-20 sm:px-8">
+          <h2 class="section-title">Stays in your browser</h2>
+          <ul class="mt-10 grid gap-8 sm:grid-cols-3">
+            <li class="fact">
+              <span class="fact-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+              <h3>No server, no tracking</h3>
+              <p>Nothing you copy leaves your browser. There are no accounts and no analytics.</p>
+            </li>
+            <li class="fact">
+              <span class="fact-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></span>
+              <h3>Only on ClickUp</h3>
+              <p>It runs on <code>app.clickup.com</code> and nowhere else. The toolbar button is greyed out on other sites.</p>
+            </li>
+            <li class="fact">
+              <span class="fact-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg></span>
+              <h3>Open source</h3>
+              <p>The code is on GitHub under the MIT license. It asks only for storage and the clipboard.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Closing call to action -->
+      <section class="border-t border-line bg-wash">
+        <div class="mx-auto flex max-w-[1120px] flex-col items-start gap-6 px-4 py-20 sm:px-8 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 class="section-title">Your next standup update, as links</h2>
+            <p class="mt-3 max-w-[32rem] text-muted">Free, takes a few seconds to install, and works the next time you open ClickUp.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <a data-store href="#" class="store-badge" aria-label="Add to Chrome from the Chrome Web Store">
+              <img src="/chrome-web-store-badge.png" width="165" height="50" alt="Available in the Chrome Web Store" />
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-line">
+      <div class="mx-auto flex max-w-[1120px] flex-wrap items-center justify-between gap-3 px-4 py-8 text-[14px] text-muted sm:px-8">
+        <p>MIT licensed, made by Kirill Semenov. Not affiliated with ClickUp.</p>
+        <nav class="flex gap-5">
+          <a data-repo href="#" class="hover:text-ink">GitHub</a>
+          <a data-issues href="#" class="hover:text-ink">Report a problem</a>
+          <a data-license href="#" class="hover:text-ink">License</a>
+        </nav>
+      </div>
+    </footer>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

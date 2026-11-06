@@ -102,6 +102,14 @@ pnpm zip        # zip for the Chrome Web Store
 pnpm compile    # type-check
 ```
 
+The landing page lives in [`site/`](site) (Vite + Tailwind + TypeScript). Its demo uses the extension's own formatter, so it copies exactly what the extension would:
+
+```bash
+cd site && pnpm install
+pnpm dev        # local preview
+pnpm build      # static build → site/dist
+```
+
 <details>
 <summary><b>Project layout</b></summary>
 
