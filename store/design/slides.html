@@ -1,0 +1,228 @@
+<!doctype html>
+<!--
+  Chrome Web Store images. Each <section> is one image at its exact pixel size.
+  render.sh opens this page with ?<id> and screenshots the top-left corner.
+  Shots come from the landing site (real ClickUp, names replaced).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Store images</title>
+<style>
+  /* Fonts from the landing site's packages (run `pnpm install` in site/ first). */
+  @font-face { font-family: 'Familjen Grotesk'; font-weight: 400 700; src: url('../../site/node_modules/@fontsource-variable/familjen-grotesk/files/familjen-grotesk-latin-wght-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'IBM Plex Sans'; font-weight: 400; src: url('../../site/node_modules/@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'IBM Plex Sans'; font-weight: 500; src: url('../../site/node_modules/@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-500-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'IBM Plex Sans'; font-weight: 600; src: url('../../site/node_modules/@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-600-normal.woff2') format('woff2'); }
+  :root {
+    --ink: #1d1b2b;
+    --muted: #5f5d70;
+    --violet: #6049e7;
+    --violet-deep: #4a35c9;
+    --violet-soft: #efecff;
+    --paper: #f7f6fd;
+    --line: #e4e2f0;
+    --link: #1d6fd8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fff; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+  section { display: none; position: relative; overflow: hidden; }
+  section.on, body.all section { display: var(--show); }
+  .slide, .marquee { --show: grid; }
+  .small { --show: flex; }
+  /* Without a hash, every image is shown stacked for review. */
+  body.all section { margin: 0 0 40px; outline: 1px dashed #ccc; }
+
+  .slide {
+    width: 1280px;
+    height: 800px;
+    background:
+      radial-gradient(1100px 700px at 100% 0%, #e6e1ff 0%, transparent 60%),
+      radial-gradient(900px 600px at 0% 100%, #f1eefe 0%, transparent 55%),
+      var(--paper);
+    grid-template-columns: 360px 1fr;
+    gap: 40px;
+    padding: 72px 64px 72px 72px;
+    align-items: center;
+  }
+  .brand { position: absolute; left: 72px; top: 48px; display: flex; align-items: center; gap: 10px; font: 600 18px 'Familjen Grotesk', sans-serif; color: var(--ink); }
+  .brand img { width: 30px; height: 30px; border-radius: 8px; }
+  h1 { font: 700 50px/1.04 'Familjen Grotesk', sans-serif; letter-spacing: -0.03em; }
+  .copy p { margin-top: 22px; font-size: 21px; line-height: 1.5; color: var(--muted); }
+  .copy ul { margin-top: 26px; list-style: none; display: grid; gap: 14px; font-size: 19px; color: var(--ink); }
+  .copy li { display: flex; gap: 12px; align-items: flex-start; line-height: 1.4; }
+  .copy li::before { content: ''; flex: none; width: 8px; height: 8px; margin-top: 10px; border-radius: 50%; background: var(--violet); }
+  kbd { display: inline-block; min-width: 1.5em; padding: 0 .35em; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; background: #fff; font: 600 .85em/1.5 ui-monospace, Menlo, monospace; text-align: center; color: var(--ink); }
+
+  .stage { position: relative; height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 22px; }
+  .shot { display: block; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px rgba(29,27,43,.08), 0 24px 48px -18px rgba(40,28,120,.35); }
+  .shot.r12 { border-radius: 12px; }
+
+  /* Chat bubbles for the before/after slide */
+  .chat { background: #fff; border-radius: 16px; padding: 22px 26px; box-shadow: 0 0 0 1px rgba(29,27,43,.08), 0 24px 48px -18px rgba(40,28,120,.3); }
+  .chat .lbl { font: 600 14px 'IBM Plex Sans', sans-serif; color: var(--muted); margin-bottom: 14px; }
+  .chat .lbl.good { color: var(--violet); }
+  .msg { display: flex; gap: 14px; }
+  .av { flex: none; width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; color: #fff; font-weight: 600; }
+  .meta { font-size: 15px; } .meta b { font-weight: 600; } .meta span { color: #9a98aa; margin-left: 6px; font-size: 13px; }
+  .body { margin-top: 4px; font-size: 17px; line-height: 1.55; }
+  .raw { color: var(--link); font-size: 15px; }
+  .body ul { margin-top: 4px; padding-left: 22px; }
+  .body a { color: var(--link); text-decoration: underline; text-underline-offset: 3px; }
+  .dim { color: #9a98aa; font-style: italic; font-size: 15px; }
+
+  /* Promo tiles */
+  .small {
+    width: 440px; height: 280px; padding: 36px;
+    background: linear-gradient(140deg, #7b66f5 0%, #5a43d6 55%, #4330b8 100%);
+    color: #fff; flex-direction: column; justify-content: space-between;
+  }
+  .small img { width: 64px; height: 64px; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,.25); }
+  .small h2 { font: 700 34px/1.02 'Familjen Grotesk', sans-serif; letter-spacing: -0.02em; }
+  .small p { margin-top: 10px; font-size: 17px; line-height: 1.4; color: rgba(255,255,255,.85); }
+
+  .marquee {
+    width: 1400px; height: 560px;
+    background: linear-gradient(120deg, #7b66f5 0%, #5a43d6 50%, #3f2db0 100%);
+    color: #fff; grid-template-columns: 560px 1fr; align-items: center; padding: 0 0 0 80px; gap: 40px;
+  }
+  .marquee .mbrand { display: flex; align-items: center; gap: 12px; font: 600 20px 'Familjen Grotesk', sans-serif; color: rgba(255,255,255,.9); }
+  .marquee .mbrand img { width: 36px; height: 36px; border-radius: 9px; box-shadow: 0 6px 16px rgba(0,0,0,.25); }
+  .marquee h2 { margin-top: 28px; font: 700 64px/1 'Familjen Grotesk', sans-serif; letter-spacing: -0.03em; }
+  .marquee p { margin-top: 22px; font-size: 22px; line-height: 1.5; color: rgba(255,255,255,.85); max-width: 30rem; }
+  .marquee .mstage { position: relative; height: 100%; }
+</style>
+</head>
+<body>
+
+<!-- 1. Before / after -->
+<section id="s1" class="slide">
+  <div class="brand"><img src="../../public/icon/128.png" alt="" />ClickUp Link Copier</div>
+  <div class="copy">
+    <h1>Paste task titles,<br />not task URLs</h1>
+    <p>Copy ClickUp tasks as clickable titles. Slack, Notion, Docs and Gmail show what the task is, not a wall of links.</p>
+  </div>
+  <div class="stage">
+    <div class="chat">
+      <div class="lbl">Pasting ClickUp URLs</div>
+      <div class="msg"><div class="av" style="background:#c9c7d6">M</div><div>
+        <div class="meta"><b>Maya</b><span>9:41</span></div>
+        <div class="body">Shipped today:
+          <div class="raw">https://app.clickup.com/t/1234567/APP-412</div>
+          <div class="raw">https://app.clickup.com/t/1234567/APP-405</div>
+          <div class="raw">https://app.clickup.com/t/1234567/APP-417</div>
+          <div class="dim">…which task was which?</div>
+        </div></div></div>
+    </div>
+    <div class="chat">
+      <div class="lbl good">With ClickUp Link Copier</div>
+      <div class="msg"><div class="av" style="background:var(--violet)">M</div><div>
+        <div class="meta"><b>Maya</b><span>9:41</span></div>
+        <div class="body">Shipped today:
+          <ul>
+            <li><a>[APP-412] Add progress bar to signup steps</a></li>
+            <li><a>[APP-405] Return 404 for archived projects</a></li>
+            <li><a>[APP-417] Fix date picker in dark mode</a></li>
+          </ul>
+        </div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. One task -->
+<section id="s2" class="slide">
+  <div class="brand"><img src="../../public/icon/128.png" alt="" />ClickUp Link Copier</div>
+  <div class="copy">
+    <h1>Copy any task in one click</h1>
+    <ul>
+      <li><span>Hover a row, card or subtask and click the link button</span></li>
+      <li><span>On an open task, use <b>Copy link</b> in the header</span></li>
+      <li><span>Custom task IDs come through, like [APP-451]</span></li>
+    </ul>
+  </div>
+  <div class="stage">
+    <img class="shot" src="../../site/public/shots/row-hover.webp" style="width:780px" alt="" />
+    <img class="shot" src="../../site/public/shots/task-header.webp" style="width:780px" alt="" />
+  </div>
+</section>
+
+<!-- 3. Collect -->
+<section id="s3" class="slide">
+  <div class="brand"><img src="../../public/icon/128.png" alt="" />ClickUp Link Copier</div>
+  <div class="copy">
+    <h1>Collect a list as you browse</h1>
+    <ul>
+      <li><span>Hold <kbd>⌥</kbd> / <kbd>Alt</kbd> and click tasks anywhere in ClickUp</span></li>
+      <li><span>Collected tasks turn purple</span></li>
+      <li><span>Copy them all with <kbd>⌥</kbd><kbd>⇧</kbd><kbd>C</kbd></span></li>
+    </ul>
+  </div>
+  <div class="stage">
+    <img class="shot" src="../../site/public/shots/alt-collect.webp" style="width:780px" alt="" />
+    <img class="shot r12" src="../../site/public/shots/dock-bar.webp" style="width:600px; align-self:center" alt="" />
+  </div>
+</section>
+
+<!-- 4. Preview -->
+<section id="s4" class="slide">
+  <div class="brand"><img src="../../public/icon/128.png" alt="" />ClickUp Link Copier</div>
+  <div class="copy">
+    <h1>See exactly what will paste</h1>
+    <ul>
+      <li><span>Drag to reorder before you copy</span></li>
+      <li><span>Copy or remove a single task</span></li>
+      <li><span>Turn task IDs on or off</span></li>
+      <li><span>Undo any remove or clear</span></li>
+    </ul>
+  </div>
+  <div class="stage" style="align-items:center">
+    <img class="shot r12" src="../../site/public/shots/dock-open.webp" style="width:680px" alt="" />
+  </div>
+</section>
+
+<!-- 5. Everywhere + settings -->
+<section id="s5" class="slide">
+  <div class="brand"><img src="../../public/icon/128.png" alt="" />ClickUp Link Copier</div>
+  <div class="copy">
+    <h1>Works on lists, boards and subtasks</h1>
+    <ul>
+      <li><span>Buttons look like ClickUp's own, in light and dark</span></li>
+      <li><span>Markdown for code editors and GitHub, or plain URLs</span></li>
+      <li><span>No server, no tracking. Runs only on ClickUp</span></li>
+    </ul>
+  </div>
+  <div class="stage" style="flex-direction:row; align-items:center; gap:28px">
+    <img class="shot" src="../../site/public/shots/board-card.webp" style="width:270px" alt="" />
+    <img class="shot r12" src="../../site/public/shots/popup.webp" style="width:400px" alt="" />
+  </div>
+</section>
+
+<!-- Small promo tile -->
+<section id="small" class="small">
+  <img src="../../public/icon/128.png" alt="" />
+  <div>
+    <h2>ClickUp Link Copier</h2>
+    <p>Paste task titles, not task URLs</p>
+  </div>
+</section>
+
+<!-- Marquee promo tile -->
+<section id="marquee" class="marquee">
+  <div>
+    <div class="mbrand"><img src="../../public/icon/128.png" alt="" />ClickUp Link Copier</div>
+    <h2>Paste task titles,<br />not task URLs</h2>
+    <p>Copy one ClickUp task in a click, or collect a few and paste them as a list.</p>
+  </div>
+  <div class="mstage">
+    <img class="shot" src="../../site/public/shots/alt-collect.webp" style="position:absolute; left:0; top:70px; width:660px" alt="" />
+    <img class="shot r12" src="../../site/public/shots/dock-open.webp" style="position:absolute; left:150px; top:250px; width:560px" alt="" />
+  </div>
+</section>
+
+<script>
+  const id = location.search.slice(1);
+  const el = id && document.getElementById(id);
+  if (el) el.classList.add('on'); else document.body.classList.add('all');
+</script>
+</body>
+</html>

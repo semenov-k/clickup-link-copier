@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Store listing kit</title>
+<link rel="icon" href="assets/store-icon-128.png" />
+<style>
+  :root {
+    --paper: #f7f7fa; --surface: #fff; --ink: #1f1f24; --muted: #66667a; --line: #e4e4ec;
+    --violet: #6049e7; --violet-hover: #553ed0; --violet-subtle: #efecff; --ok: #18794e;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #141416; --surface: #1c1c20; --ink: #ececf0; --muted: #a0a0b0; --line: #2d2d34;
+      --violet: #7b68ee; --violet-hover: #8b7af0; --violet-subtle: #26223f; --ok: #4cc38a; color-scheme: dark; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.55 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+  main { max-width: 1040px; margin: 0 auto; padding: 40px 20px 80px; }
+  header { display: flex; align-items: center; gap: 14px; }
+  header img { width: 44px; height: 44px; border-radius: 11px; }
+  h1 { margin: 0; font-size: 26px; letter-spacing: -0.01em; }
+  header p { margin: 2px 0 0; color: var(--muted); }
+  nav { margin: 24px 0 8px; display: flex; flex-wrap: wrap; gap: 8px; }
+  nav a { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-decoration: none; font-size: 14px; }
+  nav a:hover { border-color: var(--violet); color: var(--violet); }
+
+  h2 { margin: 48px 0 4px; font-size: 20px; }
+  .tab { margin: 0 0 16px; color: var(--muted); font-size: 14px; }
+  .field { margin-top: 14px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  .field-head { display: flex; align-items: center; gap: 12px; }
+  .label { font-weight: 600; }
+  .hint { color: var(--muted); font-size: 13px; }
+  .grow { flex: 1; }
+  .count { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .value { margin: 10px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
+  .value.long { max-height: 340px; overflow: auto; padding: 12px 14px; border-radius: 8px; background: var(--paper); border: 1px solid var(--line); font-size: 14px; }
+  .choice { display: inline-block; margin-top: 10px; padding: 4px 10px; border-radius: 6px; background: var(--violet-subtle); color: var(--violet); font-weight: 600; }
+
+  button.copy { flex: none; height: 32px; padding: 0 14px; border: 0; border-radius: 8px; background: var(--violet); color: #fff; font: 600 13px inherit; font-family: inherit; cursor: pointer; transition: background-color .15s; }
+  button.copy:hover { background: var(--violet-hover); }
+  button.copy.done { background: var(--ok); }
+
+  .assets { display: grid; gap: 14px; margin-top: 14px; }
+  .asset { display: grid; grid-template-columns: 220px 1fr; gap: 20px; align-items: start; padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  @media (max-width: 720px) { .asset { grid-template-columns: 1fr; } }
+  .asset img { display: block; max-width: 100%; border-radius: 8px; border: 1px solid var(--line); }
+  .asset .meta { color: var(--muted); font-size: 13px; }
+  .asset a.dl { display: inline-block; margin-top: 10px; color: var(--violet); font-weight: 600; text-decoration: none; }
+  .asset a.dl:hover { text-decoration: underline; }
+  .shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; margin-top: 12px; }
+  .shots figure { margin: 0; }
+  .shots figcaption { margin-top: 6px; font-size: 13px; color: var(--muted); }
+
+  .note { margin-top: 14px; padding: 12px 16px; border-radius: 10px; background: var(--violet-subtle); font-size: 14px; }
+  .check { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 6px; }
+  .check li::before { content: '☐ '; color: var(--muted); }
+  code { font: 13px ui-monospace, Menlo, monospace; padding: 1px 5px; border-radius: 5px; background: var(--paper); border: 1px solid var(--line); }
+  :focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <img src="assets/store-icon-128.png" alt="" />
+    <div>
+      <h1>ClickUp Link Copier: store listing kit</h1>
+      <p>Everything for the Chrome Web Store dashboard. Copy each field into the matching box.</p>
+    </div>
+  </header>
+  <nav>
+    <a href="#listing">Store listing</a>
+    <a href="#graphics">Graphic assets</a>
+    <a href="#additional">Additional fields</a>
+    <a href="#privacy">Privacy practices</a>
+  </nav>
+
+  <!-- ===================== Store listing ===================== -->
+  <h2 id="listing">Product details</h2>
+  <p class="tab">Store listing tab. Title and summary come from the package (manifest), so there's nothing to enter for them.</p>
+
+  <div class="field">
+    <div class="field-head"><span class="label">Description</span><span class="hint">Required</span><span class="grow"></span><span class="count" data-count="desc"></span><button class="copy" data-copy="desc">Copy</button></div>
+<pre class="value long" id="desc">Stop pasting bare ClickUp URLs. ClickUp Link Copier copies tasks as clickable titles, so Slack, Notion, Google Docs and Gmail show what each task is:
+
+• [APP-412] Add progress bar to signup steps
+• [APP-405] Return 404 for archived projects
+
+instead of a list of https://app.clickup.com/t/… links nobody can tell apart.
+
+COPY ONE TASK
+Hover any task in List view, a card in Board view, or a subtask on an open task, and click the link button. On an open task, use Copy link in the header. One task pastes as a single clickable title.
+
+COLLECT A LIST
+Hold Alt (⌥ Option on Mac) and click tasks anywhere in ClickUp: rows, cards, subtasks, or task links in docs and comments. Collected tasks are highlighted, and a dock at the bottom shows exactly what will paste. Drag to reorder, then click Copy or press Alt+Shift+C (⌥⇧C). Several tasks paste as a bulleted list.
+
+PASTES RIGHT EVERYWHERE
+Each copy carries a rich version and a plain one. Slack, Notion, Google Docs and Gmail get clickable titles. Code editors, GitHub and terminals get Markdown links. Prefer "Title — url" or bare URLs? It's a setting.
+
+TASK IDS YOUR WAY
+Titles start with the task ID, like [APP-412], and use your custom task IDs where your space has them. Turn IDs off with one switch.
+
+FEELS LIKE CLICKUP
+The buttons are styled like ClickUp's own and follow its light and dark themes. Removing, clearing and copy-and-clear can all be undone.
+
+PRIVATE BY DESIGN
+No server, no analytics, no account. The extension runs only on app.clickup.com and keeps your list in your browser's local storage. The code is open source under the MIT license:
+https://github.com/semenov-k/clickup-link-copier
+
+ClickUp Link Copier is an independent project and is not affiliated with or endorsed by ClickUp.</pre>
+  </div>
+
+  <div class="field">
+    <div class="field-head"><span class="label">Category</span><span class="grow"></span></div>
+    <span class="choice">Productivity → Workflow &amp; Planning</span>
+    <p class="hint" style="margin:8px 0 0">Alternative if you prefer: Productivity → Tools.</p>
+  </div>
+
+  <div class="field">
+    <div class="field-head"><span class="label">Language</span><span class="grow"></span></div>
+    <span class="choice">English</span>
+  </div>
+
+  <!-- ===================== Graphic assets ===================== -->
+  <h2 id="graphics">Graphic assets</h2>
+  <p class="tab">All images are 24-bit PNG without transparency, as the store requires (the icon keeps its transparent corners, which is allowed). Regenerate them with <code>store/render.sh</code>.</p>
+
+  <div class="assets">
+    <div class="asset">
+      <img src="assets/store-icon-128.png" alt="Store icon" style="width:128px; border:0" />
+      <div><div class="label">Store icon</div><div class="meta">128×128 PNG. Same icon as the extension.</div>
+        <a class="dl" href="assets/store-icon-128.png" download>Download store-icon-128.png</a></div>
+    </div>
+
+    <div class="asset" style="grid-template-columns:1fr">
+      <div><div class="label">Screenshots</div><div class="meta">5 of 5, 1280×800. Upload them in this order.</div></div>
+      <div class="shots">
+        <figure><img src="assets/screenshot-1.png" alt="Screenshot 1" /><figcaption>1. Paste task titles, not task URLs — <a class="dl" style="margin:0" href="assets/screenshot-1.png" download>download</a></figcaption></figure>
+        <figure><img src="assets/screenshot-2.png" alt="Screenshot 2" /><figcaption>2. Copy any task in one click — <a class="dl" style="margin:0" href="assets/screenshot-2.png" download>download</a></figcaption></figure>
+        <figure><img src="assets/screenshot-3.png" alt="Screenshot 3" /><figcaption>3. Collect a list as you browse — <a class="dl" style="margin:0" href="assets/screenshot-3.png" download>download</a></figcaption></figure>
+        <figure><img src="assets/screenshot-4.png" alt="Screenshot 4" /><figcaption>4. See exactly what will paste — <a class="dl" style="margin:0" href="assets/screenshot-4.png" download>download</a></figcaption></figure>
+        <figure><img src="assets/screenshot-5.png" alt="Screenshot 5" /><figcaption>5. Works on lists, boards and subtasks — <a class="dl" style="margin:0" href="assets/screenshot-5.png" download>download</a></figcaption></figure>
+      </div>
+    </div>
+
+    <div class="asset">
+      <img src="assets/small-promo-tile.png" alt="Small promo tile" />
+      <div><div class="label">Small promo tile</div><div class="meta">440×280 PNG.</div>
+        <a class="dl" href="assets/small-promo-tile.png" download>Download small-promo-tile.png</a></div>
+    </div>
+
+    <div class="asset">
+      <img src="assets/marquee-promo-tile.png" alt="Marquee promo tile" />
+      <div><div class="label">Marquee promo tile</div><div class="meta">1400×560 PNG. Only shown if the store features the extension.</div>
+        <a class="dl" href="assets/marquee-promo-tile.png" download>Download marquee-promo-tile.png</a></div>
+    </div>
+
+    <div class="asset">
+      <div class="label">Global promo video</div>
+      <div class="meta">Optional. Leave empty.</div>
+    </div>
+  </div>
+
+  <!-- ===================== Additional fields ===================== -->
+  <h2 id="additional">Additional fields</h2>
+  <p class="tab">Store listing tab, bottom section.</p>
+
+  <div class="field">
+    <div class="field-head"><span class="label">Official URL</span><span class="grow"></span></div>
+    <span class="choice">None</span>
+    <p class="hint" style="margin:8px 0 0">Only available after verifying a site you own in Google Search Console. Not needed.</p>
+  </div>
+  <div class="field">
+    <div class="field-head"><span class="label">Homepage URL</span><span class="grow"></span><button class="copy" data-copy="home">Copy</button></div>
+    <p class="value" id="home">https://semenov-k.github.io/clickup-link-copier/</p>
+  </div>
+  <div class="field">
+    <div class="field-head"><span class="label">Support URL</span><span class="grow"></span><button class="copy" data-copy="support">Copy</button></div>
+    <p class="value" id="support">https://github.com/semenov-k/clickup-link-copier/issues</p>
+  </div>
+  <div class="field">
+    <div class="field-head"><span class="label">Mature content</span><span class="grow"></span></div>
+    <span class="choice">Off</span>
+  </div>
+
+  <!-- ===================== Privacy practices ===================== -->
+  <h2 id="privacy">Privacy practices</h2>
+  <p class="tab">Privacy practices tab. Required before you can submit.</p>
+
+  <div class="field">
+    <div class="field-head"><span class="label">Single purpose description</span><span class="grow"></span><span class="count" data-count="purpose"></span><button class="copy" data-copy="purpose">Copy</button></div>
+    <p class="value" id="purpose">Copy ClickUp tasks as clickable title links, either one task at a time or as a collected list, so they paste as readable links into chat, docs and email.</p>
+  </div>
+
+  <div class="field">
+    <div class="field-head"><span class="label">Justification: storage</span><span class="grow"></span><button class="copy" data-copy="j-storage">Copy</button></div>
+    <p class="value" id="j-storage">Saves the list of tasks the user collects and the user's paste settings (task ID prefix, plain-text format, clear after copying) in the browser's local storage, so the list is shared between ClickUp tabs and the toolbar popup and survives page reloads. Nothing is sent anywhere.</p>
+  </div>
+  <div class="field">
+    <div class="field-head"><span class="label">Justification: clipboardWrite</span><span class="grow"></span><button class="copy" data-copy="j-clip">Copy</button></div>
+    <p class="value" id="j-clip">Writes the selected task titles and links to the clipboard, as rich text and plain text, when the user clicks a Copy button or presses the copy shortcut. This is the extension's core feature.</p>
+  </div>
+  <div class="field">
+    <div class="field-head"><span class="label">Justification: declarativeContent</span><span class="grow"></span><button class="copy" data-copy="j-dc">Copy</button></div>
+    <p class="value" id="j-dc">Enables the toolbar button only on app.clickup.com pages and greys it out everywhere else. Chrome evaluates the page rule itself, so the extension never reads the addresses of other sites.</p>
+  </div>
+  <div class="field">
+    <div class="field-head"><span class="label">Justification: host permission (https://app.clickup.com/*)</span><span class="grow"></span><button class="copy" data-copy="j-host">Copy</button></div>
+    <p class="value" id="j-host">Adds Copy link and Add to list buttons to ClickUp pages and reads the title and link of the task the user clicks, so it can copy them. The extension runs on no other site.</p>
+  </div>
+  <div class="field">
+    <div class="field-head"><span class="label">Are you using remote code?</span><span class="grow"></span></div>
+    <span class="choice">No, I am not using remote code</span>
+  </div>
+
+  <div class="field">
+    <div class="field-head"><span class="label">Data usage</span><span class="grow"></span></div>
+    <p class="value">Leave every data type <b>unchecked</b>. The extension reads task titles and links on the page only to put them on the user's clipboard, keeps the collected list in local storage, and never transmits anything off the device.</p>
+    <p class="value">Then tick all three certifications:</p>
+    <ul class="check">
+      <li>I do not sell or transfer user data to third parties, outside of the approved use cases</li>
+      <li>I do not use or transfer user data for purposes that are unrelated to my item's single purpose</li>
+      <li>I do not use or transfer user data to determine creditworthiness or for lending purposes</li>
+    </ul>
+  </div>
+
+  <div class="field">
+    <div class="field-head"><span class="label">Privacy policy URL</span><span class="hint">Optional when no data is collected</span><span class="grow"></span><button class="copy" data-copy="policy">Copy</button></div>
+    <p class="value" id="policy">https://semenov-k.github.io/clickup-link-copier/</p>
+    <p class="hint" style="margin:8px 0 0">The site's "Stays in your browser" section states the policy. Add a dedicated privacy page later if a reviewer asks for one.</p>
+  </div>
+
+  <div class="note">Before submitting: run <code>pnpm zip</code> in the repo root and upload <code>.output/clickup-link-copier-1.0.0-chrome.zip</code> on the Package tab.</div>
+</main>
+
+<script>
+  // Character counts against the store's limits.
+  const limits = { desc: 16000, purpose: 1000 };
+  for (const el of document.querySelectorAll('[data-count]')) {
+    const id = el.dataset.count;
+    const n = document.getElementById(id).textContent.length;
+    el.textContent = `${n.toLocaleString()} / ${limits[id].toLocaleString()}`;
+  }
+
+  async function copyText(text) {
+    try { await navigator.clipboard.writeText(text); return; } catch {}
+    const ta = Object.assign(document.createElement('textarea'), { value: text });
+    document.body.append(ta); ta.select(); document.execCommand('copy'); ta.remove();
+  }
+  for (const btn of document.querySelectorAll('button.copy')) {
+    btn.addEventListener('click', async () => {
+      await copyText(document.getElementById(btn.dataset.copy).textContent);
+      btn.textContent = 'Copied'; btn.classList.add('done');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('done'); }, 1400);
+    });
+  }
+</script>
+</body>
+</html>
