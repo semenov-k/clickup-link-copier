@@ -14,7 +14,7 @@ export function linkText(t: Task, { includeId }: FormatOptions): string {
   return t.title.toLowerCase().startsWith(tag.toLowerCase()) ? t.title : `${tag} ${t.title}`;
 }
 
-const escapeHtml = (s: string) =>
+export const escapeHtml = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 
 /** Brackets are valid inside Markdown link text as long as they're balanced. */

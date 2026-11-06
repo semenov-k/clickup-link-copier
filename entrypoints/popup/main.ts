@@ -7,15 +7,18 @@ import { flashCopied, renderPreviewList } from '@/utils/preview-list';
 import {
   ALT_KEY,
   COPY_ALL_SHORTCUT,
+  clearTasks,
   collectionItem,
   getSettings,
   linkCount,
-  removeTask,
+  removeTasks,
   reorderTasks,
-  setCollection,
+  restoreTasks,
   settingsItem,
   updateSettings,
+  withDefaults,
 } from '@/utils/store';
+import type { RemovedTask } from '@/utils/collection';
 import type { StoredTask } from '@/utils/task';
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -34,8 +37,8 @@ document.querySelectorAll('kbd.alt').forEach((el) => (el.textContent = ALT_KEY))
 $('copy-all-kbd').textContent = COPY_ALL_SHORTCUT;
 $('add-icon').innerHTML = icons.listPlus(13);
 
-/** Last cleared list, so "Clear list" can turn into "Undo". */
-let undo: StoredTask[] | null = null;
+/** Tasks taken out by the last clear, so "Clear list" can turn into "Undo clear". */
+let undo: RemovedTask[] | null = null;
 let copiedTimer = 0;
 let current: StoredTask[] = [];
 let format = { includeId: true };
@@ -64,7 +67,7 @@ function render(list: StoredTask[]) {
           () => flashCopied(btn),
           () => (btn.title = 'Couldn’t write to the clipboard. Try again.'),
         ),
-      onRemove: (id) => void removeTask(id),
+      onRemove: (id) => void removeTasks([id]),
       onReorder: (ids) => void reorderTasks(ids),
     },
     format,
@@ -87,33 +90,30 @@ copyBtn.addEventListener('click', async () => {
     setCopyLabel((await collectionItem.getValue()).length);
   }, 1500);
   if ((await getSettings()).clearAfterCopy) {
-    undo = list;
-    await setCollection([]);
+    // Only remove what was copied; tasks added meanwhile stay.
+    undo = (await removeTasks(list.map((t) => t.id))).removed;
+    render(current); // the storage watcher may have rendered before `undo` was set
   }
 });
 
 clearBtn.addEventListener('click', async () => {
-  const list = await collectionItem.getValue();
-  if (!list.length && undo) {
-    const restore = undo;
+  if (!current.length && undo) {
+    const removed = undo;
     undo = null;
-    await setCollection(restore);
+    await restoreTasks(removed);
     return;
   }
-  undo = list;
-  await setCollection([]);
+  undo = (await clearTasks()).removed;
+  render(current); // the storage watcher may have rendered before `undo` was set
 });
 
 formatSel.addEventListener('change', () => void updateSettings({ plainFormat: formatSel.value as PlainFormat }));
 clearAfter.addEventListener('change', () => void updateSettings({ clearAfterCopy: clearAfter.checked }));
 includeId.addEventListener('change', () => void updateSettings({ includeId: includeId.checked }));
-settingsItem.watch(
-  () =>
-    void getSettings().then((s) => {
-      format = { includeId: s.includeId };
-      render(current);
-    }),
-);
+settingsItem.watch((value) => {
+  format = { includeId: withDefaults(value).includeId };
+  render(current);
+});
 
 void (async () => {
   const settings = await getSettings();

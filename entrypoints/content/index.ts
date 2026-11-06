@@ -10,18 +10,23 @@ import {
   ALT_KEY,
   COPY_ALL_SHORTCUT,
   collectionItem,
+  clearTasks,
   getSettings,
-  settingsItem,
-  updateSettings,
+  isMac,
   linkCount,
-  removeTask,
+  onlyAlt,
+  removeTasks,
   reorderTasks,
-  setCollection,
+  restoreTasks,
+  settingsItem,
   toggleTask,
+  updateSettings,
+  withDefaults,
 } from '@/utils/store';
-import { parseTaskUrl, type StoredTask, type Task } from '@/utils/task';
+import { escapeHtml } from '@/utils/format';
+import { parseTaskUrl, type Task } from '@/utils/task';
 import { DETAIL, ROW_SURFACES, taskAtTarget, taskFromDetail, taskFromRow } from './surfaces';
-import { Tray, escapeHtml } from './tray';
+import { Tray } from './tray';
 
 const OWN_UI = '.cuh-actions, .cuh-detail';
 
@@ -30,8 +35,7 @@ export default defineContentScript({
   cssInjectionMode: 'manifest',
 
   async main(ctx) {
-    let collected: StoredTask[] = await collectionItem.getValue();
-    let ids = new Set(collected.map((t) => t.id));
+    let ids = new Set((await collectionItem.getValue()).map((t) => t.id));
 
     // ---------- Actions ----------
 
@@ -53,12 +57,12 @@ export default defineContentScript({
     }
 
     async function toggle(task: Task) {
-      const added = await toggleTask(task);
+      const { added, removed, size } = await toggleTask(task);
       if (!added) {
         tray.toast(`Removed <b>${escapeHtml(task.title)}</b> from list`, {
-          action: { label: 'Undo', run: () => void toggleTask(task) },
+          action: { label: 'Undo', run: () => void restoreTasks(removed) },
         });
-      } else if (collected.length === 1) {
+      } else if (size === 1) {
         // First item: teach the shortcut once per batch.
         tray.toast(`Added to list. Keep ${ALT_KEY}-clicking tasks, then press <b>${COPY_ALL_SHORTCUT}</b> to copy them.`, { duration: 4000 });
       }
@@ -78,19 +82,19 @@ export default defineContentScript({
       tray.markCopied(list.length);
       const noun = linkCount(list.length);
       if ((await getSettings()).clearAfterCopy) {
-        await setCollection([]);
+        // Only remove what was copied; tasks added meanwhile stay.
+        const { removed } = await removeTasks(list.map((t) => t.id));
         tray.toast(`Copied <b>${noun}</b>. List cleared.`, {
-          action: { label: 'Undo', run: () => void setCollection(list) },
+          action: { label: 'Undo', run: () => void restoreTasks(removed) },
         });
       }
       // Otherwise the dock's button itself turns into "Copied N links"; no toast needed.
     }
 
     async function clearAll() {
-      const list = await collectionItem.getValue();
-      await setCollection([]);
+      const { removed } = await clearTasks();
       tray.toast(`List cleared`, {
-        action: { label: 'Undo', run: () => void setCollection(list) },
+        action: { label: 'Undo', run: () => void restoreTasks(removed) },
       });
     }
 
@@ -108,38 +112,43 @@ export default defineContentScript({
           onCopyAll: () => void copyAll(),
           onClear: () => void clearAll(),
           onCopyOne: (task, btn) => void copyOne(task).then((ok) => ok && flashCopied(btn)),
-          onRemove: (id) => void removeTask(id),
+          onRemove: (id) => void removeTasks([id]),
           onReorder: (ids) => void reorderTasks(ids),
           onIncludeIdChange: (includeId) => void updateSettings({ includeId }),
         }),
     });
     ui.mount();
     const tray = ui.mounted!;
-    tray.render(collected);
+    tray.render(await collectionItem.getValue());
     tray.setFormat({ includeId: (await getSettings()).includeId });
-    settingsItem.watch(() => void getSettings().then((s) => tray.setFormat({ includeId: s.includeId })));
+    settingsItem.watch((s) => tray.setFormat({ includeId: withDefaults(s).includeId }));
 
     collectionItem.watch((list) => {
-      collected = list ?? [];
-      ids = new Set(collected.map((t) => t.id));
-      tray.render(collected);
+      ids = new Set((list ?? []).map((t) => t.id));
+      tray.render(list ?? []);
       scheduleScan();
     });
 
     // ---------- Injected buttons ----------
 
+    const flashTimers = new WeakMap<HTMLElement, number>();
+
+    /** Shows "Copied" on a button for a moment. Repeated clicks restart the timer. */
     function flash(btn: HTMLElement) {
-      const original = btn.dataset.icon ?? '';
-      btn.classList.add('cuh-done');
-      btn.querySelector('svg')!.outerHTML = icons.check(btn.classList.contains('cuh-pill') ? 15 : 14);
+      const iconSize = btn.classList.contains('cuh-pill') ? 15 : 14;
       const label = btn.querySelector('span');
-      const originalLabel = label?.textContent;
+      btn.classList.add('cuh-done');
+      btn.querySelector('svg')!.outerHTML = icons.check(iconSize);
       if (label) label.textContent = 'Copied';
-      setTimeout(() => {
-        btn.classList.remove('cuh-done');
-        btn.querySelector('svg')!.outerHTML = original;
-        if (label && originalLabel) label.textContent = originalLabel;
-      }, 1200);
+      clearTimeout(flashTimers.get(btn));
+      flashTimers.set(
+        btn,
+        window.setTimeout(() => {
+          btn.classList.remove('cuh-done');
+          btn.querySelector('svg')!.outerHTML = btn.dataset.icon ?? '';
+          if (label) label.textContent = btn.dataset.label ?? '';
+        }, 1200),
+      );
     }
 
     /** `tip` is read on hover, so toggles can reflect their current state. */
@@ -150,6 +159,7 @@ export default defineContentScript({
       btn.className = className;
       btn.draggable = false;
       btn.dataset.icon = icon;
+      if (label) btn.dataset.label = label;
       btn.innerHTML = icon + (label ? `<span>${label}</span>` : '');
       if (typeof tip === 'string') btn.setAttribute('aria-label', tip);
       btn.addEventListener('mouseenter', () => tray.showTip(tipText(), btn.getBoundingClientRect()));
@@ -176,53 +186,29 @@ export default defineContentScript({
       btn.setAttribute('aria-pressed', state);
     }
 
-    function createRowActions(getTask: () => Task | null) {
-      const group = document.createElement('span');
-      group.className = 'cuh-actions';
+    /** Copy + add/remove buttons: small icon buttons on rows and cards, labelled ones on the task page. */
+    function createActions(kind: 'row' | 'detail', getTask: () => Task | null) {
+      const detail = kind === 'detail';
+      const group = document.createElement(detail ? 'div' : 'span');
+      group.className = detail ? 'cuh-detail' : 'cuh-actions';
       shield(group);
 
-      const copy = makeButton('cuh-btn cuh-copy', icons.link(14), null, 'Copy link');
-      copy.addEventListener('click', (e) => {
+      const base = detail ? 'cuh-pill' : 'cuh-btn';
+      const copy = detail
+        ? makeButton(`${base} cuh-copy`, icons.link(15), 'Copy link', 'Copy the task title as a link')
+        : makeButton(`${base} cuh-copy`, icons.link(14), null, 'Copy link');
+      const add = makeButton(`${base} cuh-toggle`, '', null, () => add.getAttribute('aria-label') ?? '');
+
+      const onClick = (e: MouseEvent, toggleOnly: boolean) => {
         e.preventDefault();
-        e.stopPropagation();
+        e.stopPropagation(); // rows: don't open the task
         const task = getTask();
         if (!task) return;
-        if (e.altKey || e.shiftKey) void toggle(task);
+        if (toggleOnly || e.altKey || e.shiftKey) void toggle(task);
         else void copyOne(task, copy);
-      });
-
-      const add = makeButton('cuh-btn cuh-toggle', '', null, () => add.getAttribute('aria-label') ?? '');
-      add.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const task = getTask();
-        if (task) void toggle(task);
-      });
-
-      group.append(copy, add);
-      return group;
-    }
-
-    function createDetailActions(hero: Element) {
-      const group = document.createElement('div');
-      group.className = 'cuh-detail';
-      shield(group);
-
-      const copy = makeButton('cuh-pill cuh-copy', icons.link(15), 'Copy link', 'Copy the task title as a link');
-      copy.addEventListener('click', (e) => {
-        e.preventDefault();
-        const task = taskFromDetail(hero);
-        if (!task) return;
-        if (e.altKey || e.shiftKey) void toggle(task);
-        else void copyOne(task, copy);
-      });
-
-      const add = makeButton('cuh-pill cuh-toggle', '', null, () => add.getAttribute('aria-label') ?? '');
-      add.addEventListener('click', (e) => {
-        e.preventDefault();
-        const task = taskFromDetail(hero);
-        if (task) void toggle(task);
-      });
+      };
+      copy.addEventListener('click', (e) => onClick(e, false));
+      add.addEventListener('click', (e) => onClick(e, true));
 
       group.append(copy, add);
       return group;
@@ -242,7 +228,7 @@ export default defineContentScript({
           if (!mount) continue;
           let group = mount.querySelector<HTMLElement>(':scope > .cuh-actions');
           if (!group) {
-            group = createRowActions(() => taskFromRow(row, surface));
+            group = createActions('row', () => taskFromRow(row, surface));
             mount.append(group);
           }
           setToggleState(group.querySelector('.cuh-toggle')!, selected, false);
@@ -254,7 +240,7 @@ export default defineContentScript({
         if (!hero) continue;
         let group = mount.querySelector<HTMLElement>(':scope > .cuh-detail');
         if (!group) {
-          group = createDetailActions(hero);
+          group = createActions('detail', () => taskFromDetail(hero));
           mount.append(group);
         }
         const id = taskFromDetail(hero)?.id;
@@ -280,7 +266,7 @@ export default defineContentScript({
 
     // ---------- Alt+click anywhere on a task to collect it ----------
 
-    const isCollectGesture = (e: MouseEvent) => e.altKey && !e.metaKey && !e.ctrlKey && e.button === 0;
+    const isCollectGesture = (e: MouseEvent) => onlyAlt(e) && e.button === 0;
 
     const onPointer = (e: MouseEvent) => {
       if (!isCollectGesture(e)) return;
@@ -304,20 +290,32 @@ export default defineContentScript({
     const setAltMode = (on: boolean) => {
       if (root.classList.contains('cuh-alt-mode') !== on) root.classList.toggle('cuh-alt-mode', on);
     };
-    ctx.addEventListener(window, 'keydown', (e) => setAltMode(e.altKey && !e.metaKey && !e.ctrlKey), { capture: true });
-    ctx.addEventListener(window, 'keyup', (e) => setAltMode(e.altKey && !e.metaKey && !e.ctrlKey), { capture: true });
+    ctx.addEventListener(window, 'keydown', (e) => setAltMode(onlyAlt(e)), { capture: true });
+    ctx.addEventListener(window, 'keyup', (e) => setAltMode(onlyAlt(e)), { capture: true });
     ctx.addEventListener(window, 'blur', () => setAltMode(false));
-    ctx.addEventListener(window, 'pointermove', (e) => setAltMode(e.altKey && !e.metaKey && !e.ctrlKey), {
-      passive: true,
-    });
+    ctx.addEventListener(window, 'pointermove', (e) => setAltMode(onlyAlt(e)), { passive: true });
 
     // ---------- Keyboard shortcuts ----------
+
+    // macOS turns ⌥⇧C into "Ç", so match the physical key there; elsewhere match the typed letter.
+    const isCopyAllShortcut = (e: KeyboardEvent) =>
+      onlyAlt(e) && e.shiftKey && (isMac ? e.code === 'KeyC' : e.key.toLowerCase() === 'c');
+
+    /** Typing in a field (comment, doc, title…) must not trigger the shortcut. */
+    const isTyping = (e: KeyboardEvent) => {
+      const el = e.composedPath()[0];
+      return (
+        el instanceof HTMLElement &&
+        (el.isContentEditable || el instanceof HTMLTextAreaElement || el instanceof HTMLSelectElement ||
+          (el instanceof HTMLInputElement && !['checkbox', 'radio', 'button', 'submit', 'reset'].includes(el.type)))
+      );
+    };
 
     ctx.addEventListener(
       window,
       'keydown',
       (e) => {
-        if (e.altKey && e.shiftKey && !e.metaKey && !e.ctrlKey && e.code === 'KeyC') {
+        if (isCopyAllShortcut(e) && !isTyping(e)) {
           e.preventDefault();
           e.stopImmediatePropagation();
           void copyAll();

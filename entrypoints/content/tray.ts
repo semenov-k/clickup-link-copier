@@ -207,6 +207,3 @@ export class Tray {
     this.toastEl.classList.remove('visible');
   }
 }
-
-export const escapeHtml = (s: string) =>
-  s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
