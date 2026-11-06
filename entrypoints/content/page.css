@@ -1,0 +1,190 @@
+/* Styles injected into ClickUp's page. Everything is prefixed with `cuh-`. */
+
+:root {
+  --cuh-accent: #7b68ee;
+  --cuh-accent-soft: rgba(123, 104, 238, 0.12);
+  --cuh-hover: rgba(127, 127, 127, 0.18);
+}
+
+/* ---------- Row / card hover actions ---------- */
+
+.cuh-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+  margin-left: 4px;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.cuh-row:hover .cuh-actions,
+.cuh-actions:focus-within,
+.cuh-row.cuh-selected .cuh-actions {
+  opacity: 1;
+}
+
+/* When selected but not hovered, only show the "in list" check. */
+.cuh-row.cuh-selected:not(:hover) .cuh-actions .cuh-copy {
+  visibility: hidden;
+}
+
+.cuh-btn {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  color: inherit;
+  opacity: 0.65;
+  cursor: pointer;
+  transition:
+    background-color 0.12s ease,
+    opacity 0.12s ease,
+    color 0.12s ease,
+    transform 0.08s ease;
+}
+
+.cuh-btn:hover {
+  opacity: 1;
+  background: var(--cuh-hover);
+}
+
+.cuh-btn:active {
+  transform: scale(0.92);
+}
+
+.cuh-btn:focus-visible {
+  opacity: 1;
+  outline: 2px solid var(--cuh-accent);
+  outline-offset: 1px;
+}
+
+.cuh-btn svg {
+  display: block;
+  pointer-events: none;
+}
+
+.cuh-btn[data-on='true'] {
+  opacity: 1;
+  color: var(--cuh-accent);
+}
+
+.cuh-btn.cuh-done {
+  opacity: 1;
+  color: #2fa36b;
+}
+
+/* ---------- Selected rows / cards ---------- */
+
+/* ClickUp paints opaque cell backgrounds, so draw the highlight as an overlay. */
+.vgt-row.cuh-row {
+  position: relative;
+}
+
+.vgt-row.cuh-selected::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: var(--cuh-accent-soft);
+  box-shadow: inset 3px 0 0 var(--cuh-accent);
+}
+
+.board-task.cuh-selected::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border: 2px solid var(--cuh-accent);
+  border-radius: 8px;
+  background: var(--cuh-accent-soft);
+}
+
+/* Board cards: pin the buttons to the bottom-right corner, matching ClickUp's chips. */
+.board-task > .cuh-actions {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 2;
+  gap: 4px;
+  margin: 0;
+}
+
+.board-task > .cuh-actions .cuh-btn {
+  border: 1px solid rgba(127, 127, 127, 0.28);
+}
+
+/* ---------- Modifier held: show what can be collected ---------- */
+
+html.cuh-alt-mode .cuh-row,
+html.cuh-alt-mode .cuh-row *,
+html.cuh-alt-mode a[href*='/t/'] {
+  cursor: copy !important;
+}
+
+html.cuh-alt-mode .cuh-row:hover {
+  outline: 2px dashed var(--cuh-accent);
+  outline-offset: -2px;
+}
+
+/* ---------- Task detail view ---------- */
+
+.cuh-detail {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding-left: 8px;
+}
+
+.cuh-pill {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid rgba(127, 127, 127, 0.3);
+  border-radius: 6px;
+  font: 500 13px/1 inherit;
+  font-family: inherit;
+  color: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.12s ease,
+    border-color 0.12s ease,
+    color 0.12s ease;
+}
+
+.cuh-pill:hover {
+  background: var(--cuh-hover);
+}
+
+.cuh-pill:focus-visible {
+  outline: 2px solid var(--cuh-accent);
+  outline-offset: 1px;
+}
+
+.cuh-pill svg {
+  flex: none;
+  pointer-events: none;
+}
+
+.cuh-pill[data-on='true'] {
+  color: var(--cuh-accent);
+  border-color: var(--cuh-accent);
+  background: var(--cuh-accent-soft);
+}
+
+.cuh-pill.cuh-done {
+  color: #2fa36b;
+  border-color: #2fa36b;
+}

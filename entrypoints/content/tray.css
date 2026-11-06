@@ -1,0 +1,402 @@
+/*
+ * Dock, toast and tooltip. The surface borrows Slack's dark ink, because the
+ * panel is a preview of what you are about to paste there.
+ *   ink      #1A1D21  surface
+ *   raised   #222529  hover / pressed
+ *   text     #D1D2D3  body, bullets
+ *   bright   #F8F8F8  primary button, emphasis
+ *   link     #1D9BD1  links exactly as they will paste
+ *   ok       #2BAC76  confirmation
+ */
+
+:host {
+  --ink: #1a1d21;
+  --raised: #222529;
+  --raised-2: #2c2f33;
+  --line: rgba(232, 232, 232, 0.13);
+  --text: #d1d2d3;
+  --muted: #9b9c9e;
+  --bright: #f8f8f8;
+  --link: #1d9bd1;
+  --ok: #2bac76;
+  --danger: #e8735a;
+
+  --pv-text: var(--text);
+  --pv-muted: var(--muted);
+  --pv-link: var(--link);
+  --pv-line: var(--line);
+  --pv-hover: var(--raised);
+  --pv-hover-strong: var(--raised-2);
+  --pv-ok: var(--ok);
+}
+
+/* WXT resets the shadow tree with `all: initial`, so set typography on our roots. */
+.dock,
+.toast,
+.tip {
+  font: 13px/1.4 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+
+svg {
+  display: block;
+  flex: none;
+}
+
+kbd {
+  font: inherit;
+  font-weight: 600;
+  color: var(--bright);
+}
+
+/* ---------- Dock ---------- */
+
+.dock {
+  position: fixed;
+  left: 50%;
+  bottom: 56px;
+  z-index: 2147483000;
+  transform: translate(-50%, 12px);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 0.16s ease,
+    visibility 0s linear 0.2s;
+}
+
+.dock.visible {
+  transform: translate(-50%, 0);
+  opacity: 1;
+  visibility: visible;
+  transition:
+    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 0.16s ease;
+}
+
+.shell {
+  width: min(460px, calc(100vw - 32px));
+  background: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.32),
+    0 2px 8px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+}
+
+/* ---------- Preview panel (inside the shell, above the bar) ---------- */
+
+.panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.dock.open .panel {
+  grid-template-rows: 1fr;
+}
+
+.panel-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px 2px 16px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.head-label {
+  flex: 1;
+}
+
+.panel-head {
+  align-items: center;
+}
+
+/* ---------- "Task IDs" switch ---------- */
+
+.switch {
+  height: 26px;
+  padding: 0 8px 0 6px;
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.switch:hover {
+  background: var(--raised);
+  color: var(--text);
+}
+
+.switch .track {
+  position: relative;
+  width: 24px;
+  height: 14px;
+  border-radius: 7px;
+  background: var(--raised-2);
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: background-color 0.15s ease;
+}
+
+.switch .thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition:
+    transform 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.switch[aria-checked='true'] {
+  color: var(--text);
+}
+
+.switch[aria-checked='true'] .track {
+  background: var(--link);
+  box-shadow: none;
+}
+
+.switch[aria-checked='true'] .thumb {
+  transform: translateX(10px);
+  background: #fff;
+}
+
+.items {
+  max-height: min(48vh, 340px);
+}
+
+.help {
+  margin: 0;
+  padding: 8px 16px 12px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ---------- Bar ---------- */
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+}
+
+.dock.open .bar {
+  border-top: 1px solid var(--line);
+}
+
+.summary {
+  height: 32px;
+  padding: 0 8px 0 10px;
+  border-radius: 8px;
+  color: var(--text);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.summary:hover {
+  background: var(--raised);
+  color: var(--bright);
+}
+
+.summary .n {
+  color: var(--bright);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.summary .chev {
+  color: var(--muted);
+  transition: transform 0.2s ease;
+}
+
+.dock.open .summary .chev {
+  transform: rotate(180deg);
+}
+
+.spacer {
+  flex: 1;
+  min-width: 8px;
+}
+
+.primary {
+  height: 32px;
+  padding: 0 12px 0 10px;
+  border-radius: 8px;
+  background: var(--bright);
+  color: var(--ink);
+  font-weight: 700;
+  white-space: nowrap;
+  transition:
+    background-color 0.12s ease,
+    color 0.12s ease;
+}
+
+.primary:hover {
+  background: #fff;
+}
+
+.primary:active {
+  transform: translateY(1px);
+}
+
+.primary.done {
+  background: var(--ok);
+  color: #fff;
+}
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  justify-content: center;
+  border-radius: 8px;
+  color: var(--muted);
+}
+
+.icon-btn:hover {
+  background: var(--raised);
+  color: var(--bright);
+}
+
+.icon-btn.danger:hover {
+  color: var(--danger);
+}
+
+/* ---------- Toast ---------- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(56px + var(--dock-h, 46px) + 10px);
+  z-index: 2147483001;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(520px, calc(100vw - 32px));
+  padding: 8px 8px 8px 12px;
+  background: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, 6px);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    transform 0.16s ease,
+    opacity 0.14s ease,
+    visibility 0s linear 0.16s;
+}
+
+.toast.dock-hidden {
+  bottom: 56px;
+}
+
+.toast.visible {
+  transform: translate(-50%, 0);
+  opacity: 1;
+  visibility: visible;
+  transition:
+    transform 0.16s ease,
+    opacity 0.14s ease;
+}
+
+.toast .mark {
+  color: var(--ok);
+}
+
+.toast.error .mark {
+  color: var(--danger);
+}
+
+.toast .msg {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 4px;
+}
+
+.toast .msg b {
+  color: var(--bright);
+  font-weight: 600;
+}
+
+.toast .action {
+  flex: none;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 6px;
+  color: var(--bright);
+  font-weight: 600;
+  background: var(--raised);
+}
+
+.toast .action:hover {
+  background: var(--raised-2);
+}
+
+/* ---------- Tooltip ---------- */
+
+.tip {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 2147483002;
+  max-width: 280px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: var(--ink);
+  color: var(--bright);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+.tip.visible {
+  opacity: 1;
+  transition-delay: 0.3s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dock,
+  .dock.visible,
+  .panel,
+  .toast,
+  .toast.visible {
+    transition: none;
+  }
+}
