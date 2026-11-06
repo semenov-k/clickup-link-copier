@@ -108,7 +108,16 @@ The landing page lives in [`site/`](site) (Vite + Tailwind + TypeScript). Its de
 cd site && pnpm install
 pnpm dev        # local preview
 pnpm build      # static build → site/dist
+pnpm pages      # build and publish to GitHub Pages (pushes site/dist to the gh-pages branch)
 ```
+
+The first time, turn on Pages for the `gh-pages` branch: **Settings → Pages → Deploy from a branch → `gh-pages` / root**, or with the GitHub CLI:
+
+```bash
+gh api -X POST repos/semenov-k/clickup-link-copier/pages -f "source[branch]=gh-pages" -f "source[path]=/"
+```
+
+The site is then served at https://semenov-k.github.io/clickup-link-copier/.
 
 <details>
 <summary><b>Project layout</b></summary>
