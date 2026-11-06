@@ -1,0 +1,18 @@
+{
+  "name": "clickup-helper",
+  "description": "Copy ClickUp tasks as rich title links — one by one or collected in bulk.",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "build": "wxt build",
+    "zip": "wxt zip",
+    "compile": "tsc --noEmit",
+    "postinstall": "wxt prepare"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "wxt": "^0.21.5"
+  }
+}
