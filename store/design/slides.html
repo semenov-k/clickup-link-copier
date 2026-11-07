@@ -91,6 +91,10 @@
   .marquee h2 { margin-top: 28px; font: 700 64px/1 'Familjen Grotesk', sans-serif; letter-spacing: -0.03em; }
   .marquee p { margin-top: 22px; font-size: 22px; line-height: 1.5; color: rgba(255,255,255,.85); max-width: 30rem; }
   .marquee .mstage { position: relative; height: 100%; }
+  /* Social share image (og:image) for the website, 1200x630. */
+  .marquee.og { width: 1200px; height: 630px; grid-template-columns: 500px 1fr; padding-left: 72px; }
+  .marquee.og h2 { font-size: 62px; }
+  .marquee.og p { font-size: 22px; max-width: 26rem; }
 </style>
 </head>
 <body>
@@ -216,6 +220,19 @@
   <div class="mstage">
     <img class="shot" src="../../site/public/shots/alt-collect.webp" style="position:absolute; left:0; top:70px; width:660px" alt="" />
     <img class="shot r12" src="../../site/public/shots/dock-open.webp" style="position:absolute; left:150px; top:250px; width:560px" alt="" />
+  </div>
+</section>
+
+<!-- Website share image (og:image) -->
+<section id="og" class="marquee og">
+  <div>
+    <div class="mbrand"><img src="../../public/icon/128.png" alt="" />ClickUp Link Copier</div>
+    <h2>Paste task titles,<br />not task URLs</h2>
+    <p>A free Chrome extension that copies ClickUp tasks as clickable titles.</p>
+  </div>
+  <div class="mstage">
+    <img class="shot" src="../../site/public/shots/alt-collect.webp" style="position:absolute; left:0; top:90px; width:600px" alt="" />
+    <img class="shot r12" src="../../site/public/shots/dock-open.webp" style="position:absolute; left:110px; top:290px; width:520px" alt="" />
   </div>
 </section>
 

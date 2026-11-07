@@ -25,5 +25,6 @@ render() { # id width height output
 for i in 1 2 3 4 5; do render "s$i" 1280 800 "screenshot-$i.png"; done
 render small 440 280 small-promo-tile.png
 render marquee 1400 560 marquee-promo-tile.png
+render og 1200 630 ../../site/public/og.png
 magick ../public/icon/128.png "PNG32:assets/store-icon-128.png"
 echo "assets/store-icon-128.png  $(magick identify -format '%wx%h' assets/store-icon-128.png)"
